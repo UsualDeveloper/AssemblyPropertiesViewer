@@ -4,6 +4,8 @@ namespace AssemblyPropertiesViewer.Core.Interfaces
 {
     public interface ILogger
     {
+        void InitializeLogger(Type type);
+
         void Debug(string message);
 
         void Info(string message);

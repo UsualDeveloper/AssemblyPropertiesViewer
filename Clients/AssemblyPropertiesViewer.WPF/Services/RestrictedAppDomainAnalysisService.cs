@@ -19,6 +19,8 @@ namespace AssemblyPropertiesViewer.Services
         public RestrictedAppDomainAnalysisService(ILogger logger)
         {
             this.logger = logger;
+
+            this.logger.InitializeLogger(typeof(RestrictedAppDomainAnalysisService));
         }
 
         public IEnumerable<AnalysisResult> InspectAssembly(string assemblyFilePath)
@@ -40,13 +42,13 @@ namespace AssemblyPropertiesViewer.Services
             logger.Info("Closing the sandbox...");
             AppDomain.Unload(testDomain);
 
-            logger.Info("Analysis of assembly copmleted successfully.");
+            logger.Info("Assembly analysis completed successfully.");
             return analysisResults;
         }
         
         private PermissionSet GetRestrictedPermissionSet(string assemblyFilePath)
         {
-            // https://msdn.microsoft.com/en-us/library/bb763046(v=vs.110).aspx
+            //create restricted permission set, based on https://msdn.microsoft.com/en-us/library/bb763046(v=vs.110).aspx
             var permissionSet = new PermissionSet(PermissionState.None);
             permissionSet.AddPermission(new SecurityPermission(SecurityPermissionFlag.Execution));
             permissionSet.AddPermission(new FileIOPermission(FileIOPermissionAccess.Read | FileIOPermissionAccess.PathDiscovery, assemblyFilePath));
