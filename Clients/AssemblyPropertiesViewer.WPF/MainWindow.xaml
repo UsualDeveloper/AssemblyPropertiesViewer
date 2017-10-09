@@ -7,7 +7,10 @@
         xmlns:cmd="http://www.galasoft.ch/mvvmlight"
         xmlns:local="clr-namespace:AssemblyPropertiesViewer"
         mc:Ignorable="d"
-        Title="AssemblyPropertiesViewer" Height="200" Width="240" DataContext="{Binding MainWindowViewModel, Source={StaticResource Locator}}">
+        MinHeight="200" MinWidth="240"
+        Height="200" Width="240"
+        Title="Assembly Properties Viewer" DataContext="{Binding MainWindowViewModel, Source={StaticResource Locator}}" 
+        Topmost="True">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </Window.Resources>
