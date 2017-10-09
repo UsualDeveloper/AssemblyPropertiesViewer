@@ -25,28 +25,7 @@ namespace AssemblyPropertiesViewer.Analyzers.BasicAnalyzers
             // https://msdn.microsoft.com/en-us/library/system.diagnostics.debuggableattribute(v=vs.110).aspx
             
             var debuggingFlags = GetAssemblyAttributeConstructorArgumentValueOrDefault<DebuggableAttribute, DebuggingModes>(assembly, 0);
-
-            //bool isJitOptimizerDisabled, isJitTrackingEnabled;
-            //switch (debuggingFlags)
-            //{
-            //    case DebuggingModes.None:
-            //    case DebuggingModes.Default:
-            //    case DebuggingModes.DisableOptimizations:
-            //        isJitTrackingEnabled = true;
-            //        isJitOptimizerDisabled = false;
-            //        break;
-            //    default:
-            //        isJitTrackingEnabled = isJitOptimizerDisabled = false;
-            //        break;
-            //}
-
-            //if (debuggingFlags.HasFlag(DebuggingModes.Default | DebuggingModes.DisableOptimizations))
-            //{
-            //    isJitTrackingEnabled = isJitOptimizerDisabled = true;
-            //}
-
-            //return (isJitOptimizerDisabled && isJitTrackingEnabled);
-
+            
             return debuggingFlags.HasFlag(DebuggingModes.Default | DebuggingModes.DisableOptimizations);
         }
 
