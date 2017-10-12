@@ -8,6 +8,8 @@ namespace AssemblyPropertiesViewer.Analyzers.BasicAnalyzers.Base
     [Serializable]
     public abstract class AnalyzerBase
     {
+        protected const string NoValueFoundString = "/no value found/";
+
         IEnumerable<CustomAttributeData> customAttributes;
 
         protected U GetAssemblyAttributePropertyValueOrDefault<T, U>(Assembly assembly, string propertyName) where T : Attribute

@@ -16,7 +16,8 @@ namespace AssemblyPropertiesViewer.Analyzers.Loader
                 typeof(BasicAnalyzers.AssemblyFrameworkAnalyzer),
                 typeof(BasicAnalyzers.DebugOrReleaseModeAnalyzer),
                 typeof(BasicAnalyzers.AssemblyFullNameAnalyzer), 
-                typeof(BasicAnalyzers.ChecksumAnalyzer)
+                typeof(BasicAnalyzers.ChecksumAnalyzer), 
+                typeof(BasicAnalyzers.AssemblyStrongNameAnalyzer)
             };
         }
 
