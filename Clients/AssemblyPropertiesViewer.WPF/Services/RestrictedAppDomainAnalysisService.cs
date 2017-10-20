@@ -45,7 +45,13 @@ namespace AssemblyPropertiesViewer.Services
             logger.Info("Assembly analysis completed successfully.");
             return analysisResults;
         }
-        
+
+        public long GetFileSize(string filePath)
+        {
+            var fileInfo = new FileInfo(filePath);
+            return fileInfo.Length;
+        }
+
         private PermissionSet GetRestrictedPermissionSet(string assemblyFilePath)
         {
             //create restricted permission set, based on https://msdn.microsoft.com/en-us/library/bb763046(v=vs.110).aspx

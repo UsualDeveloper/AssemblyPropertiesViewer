@@ -9,39 +9,41 @@
         mc:Ignorable="d"
         MinHeight="200" MinWidth="240"
         Height="200" Width="240"
-        Title="Assembly Properties Viewer" DataContext="{Binding MainWindowViewModel, Source={StaticResource Locator}}" 
-        Topmost="True">
+        Title="Assembly Properties Viewer" 
+        DataContext="{Binding MainViewModel, Source={StaticResource Locator}}" 
+        Topmost="True" 
+        ResizeMode="CanMinimize">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </Window.Resources>
     <Grid>
-        <StackPanel Orientation="Vertical" Margin="0">
-            <Grid Margin="0, 0, 0, 10">
-                <TextBlock Padding="10" x:Name="textBlock" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="80" TextWrapping="Wrap" TextAlignment="Center" 
-                   Text="Drop assembly here to display information about it" Margin="0" AllowDrop="True" Background="#FFD0D0D0" Visibility="Visible">
+        <Grid Margin="0">
+            <TextBlock Padding="20" x:Name="textBlock" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextWrapping="Wrap" TextAlignment="Center" 
+                   Text="Drop assembly here to display information about it" Margin="0" AllowDrop="True" Background="#FFD0D0D0">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Drop">
                         <cmd:EventToCommand Command="{Binding DropAssemblyCommand}" PassEventArgsToCommand="True"></cmd:EventToCommand>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-                </TextBlock>
+            </TextBlock>
 
-                <Rectangle Stroke="#AA000000" StrokeThickness="2" StrokeDashArray="3 5" Margin="10">
+            <Rectangle Stroke="#AA000000" StrokeThickness="2" StrokeDashArray="3 5" Margin="10" />
 
-                </Rectangle>
-            </Grid>
+            <!--<Rectangle Stroke="#AA000000" StrokeThickness="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="20" Height="20">
+                <Rectangle.Fill>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0,0">
+                        <GradientStop Color="#FFD0D0D0" Offset="0"/>
+                        <GradientStop Color="#FF000000" Offset="0.9"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
 
-
-            <DataGrid ItemsSource="{Binding AssemblyAnalysisResults}" AutoGenerateColumns="False" 
-                  CanUserResizeColumns="True" IsReadOnly="True"
-                  RowBackground="#FFFFFF" AlternatingRowBackground="#DDDDDD" HeadersVisibility="None" 
-                  Margin="0, 10" MinHeight="20">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Binding="{Binding AssemblyPropertyName}" />
-                    <DataGridTextColumn Binding="{Binding Value}" />
-                </DataGrid.Columns>
-            </DataGrid>
-        </StackPanel>
+            <Rectangle HorizontalAlignment="Right" VerticalAlignment="Bottom" StrokeThickness="0" Width="10" Height="10" Margin="5">
+                <Rectangle.Fill>
+                    <SolidColorBrush Color="#AA000000" />
+                </Rectangle.Fill>
+            </Rectangle>-->
+        </Grid>
         <Border BorderBrush="#FF000000" BorderThickness="2">
             <Border.Effect>
                 <DropShadowEffect BlurRadius="5" ShadowDepth="0" Direction="0"></DropShadowEffect>

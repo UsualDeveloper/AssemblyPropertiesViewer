@@ -75,10 +75,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Messages\ShowPropertiesMessage.cs" />
+    <Compile Include="PropertiesWindow.xaml.cs">
+      <DependentUpon>PropertiesWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Services\Interfaces\IAssemblyAnalysisService.cs" />
     <Compile Include="Services\RestrictedAppDomainAnalysisService.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModelLocator.cs" />
+    <Compile Include="ViewModel\PropertiesViewModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -91,6 +96,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="PropertiesWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

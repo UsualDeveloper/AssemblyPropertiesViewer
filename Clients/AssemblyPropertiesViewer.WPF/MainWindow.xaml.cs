@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using AssemblyPropertiesViewer.Messages;
+using GalaSoft.MvvmLight.Messaging;
+using System.Windows;
 
 namespace AssemblyPropertiesViewer
 {
@@ -10,6 +12,18 @@ namespace AssemblyPropertiesViewer
         public MainWindow()
         {
             InitializeComponent();
+
+            Messenger.Default.Register<ShowPropertiesMessage>(this, OpenResultsWindow);
+        }
+
+        private void OpenResultsWindow(ShowPropertiesMessage message)
+        {
+            var propertiesWindow = new PropertiesWindow();
+            propertiesWindow.Owner = Window.GetWindow(this);
+
+            propertiesWindow.DataContext = message.Content;
+
+            propertiesWindow.Show();
         }
     }
 }

@@ -54,11 +54,21 @@ namespace AssemblyPropertiesViewer
             SimpleIoc.Default.Register<MainViewModel>();
         }
 
-        public MainViewModel MainWindowViewModel
+
+        // TODO: make this part of code more open to extending with other view models
+        public MainViewModel MainViewModel
         {
             get
             {
                 return SimpleIoc.Default.GetInstance<MainViewModel>();
+            }
+        }
+
+        public PropertiesViewModel PropertiesViewModel
+        {
+            get
+            {
+                return SimpleIoc.Default.GetInstance<PropertiesViewModel>();
             }
         }
 

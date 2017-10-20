@@ -1,7 +1,9 @@
 using AssemblyPropertiesViewer.Analyzers.Models;
+using AssemblyPropertiesViewer.Messages;
 using AssemblyPropertiesViewer.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,29 +44,24 @@ namespace AssemblyPropertiesViewer.ViewModel
             DropAssemblyCommand = new RelayCommand<DragEventArgs>(AnalyzeDroppedAssembly);
         }
         
-        public IEnumerable<AnalysisResult> AssemblyAnalysisResults
-        {
-            get { return assemblyAnalysisResults; }
-            private set
-            {
-                assemblyAnalysisResults = value;
-
-                RaisePropertyChanged(nameof(AssemblyAnalysisResults));
-            }
-        }
-
         private void AnalyzeDroppedAssembly(DragEventArgs arg)
         {
-            AssemblyAnalysisResults = Enumerable.Empty<AnalysisResult>();
-
             string filePath = GetFilePathForDroppedFileData(arg.Data);
 
             if (string.IsNullOrEmpty(filePath))
                 return;
 
-            AssemblyAnalysisResults = analysisService.InspectAssembly(filePath);
+            long fileSize = analysisService.GetFileSize(filePath);
+            var assemblyAnalysisResults = analysisService.InspectAssembly(filePath);
+
+            var assemblyPropertiesViewModel = new PropertiesViewModel(filePath, fileSize, assemblyAnalysisResults);
+            ShowAnalysisResults(filePath, assemblyPropertiesViewModel);
         }
 
+        private void ShowAnalysisResults(string filePath, PropertiesViewModel assemblyPropertiesViewModel)
+        {
+            Messenger.Default.Send(new ShowPropertiesMessage(assemblyPropertiesViewModel));
+        }
 
         private string GetFilePathForDroppedFileData(IDataObject droppedFileData)
         {
