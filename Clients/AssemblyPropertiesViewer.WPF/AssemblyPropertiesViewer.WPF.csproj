@@ -80,7 +80,9 @@
       <DependentUpon>PropertiesWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Services\Interfaces\IAssemblyAnalysisService.cs" />
+    <Compile Include="Services\Interfaces\IWindowService.cs" />
     <Compile Include="Services\RestrictedAppDomainAnalysisService.cs" />
+    <Compile Include="Services\WindowService.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModelLocator.cs" />
     <Compile Include="ViewModel\PropertiesViewModel.cs" />

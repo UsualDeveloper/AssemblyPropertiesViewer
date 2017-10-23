@@ -47,14 +47,14 @@ namespace AssemblyPropertiesViewer
         {
             SimpleIoc.Default.Register<IAssemblyAnalysisService, RestrictedAppDomainAnalysisService>();
             SimpleIoc.Default.Register<ILogger, BasicLogger>();
+            SimpleIoc.Default.Register<IWindowService, WindowService>();
         }
 
         private void RegisterViewModels()
         {
             SimpleIoc.Default.Register<MainViewModel>();
         }
-
-
+        
         // TODO: make this part of code more open to extending with other view models
         public MainViewModel MainViewModel
         {
@@ -63,15 +63,7 @@ namespace AssemblyPropertiesViewer
                 return SimpleIoc.Default.GetInstance<MainViewModel>();
             }
         }
-
-        public PropertiesViewModel PropertiesViewModel
-        {
-            get
-            {
-                return SimpleIoc.Default.GetInstance<PropertiesViewModel>();
-            }
-        }
-
+        
         public static void Cleanup()
         {
             SimpleIoc.Default.Unregister<IAssemblyAnalysisService>();

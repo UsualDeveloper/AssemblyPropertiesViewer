@@ -1,11 +1,7 @@
-using AssemblyPropertiesViewer.Analyzers.Models;
-using AssemblyPropertiesViewer.Messages;
 using AssemblyPropertiesViewer.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 
@@ -27,19 +23,20 @@ namespace AssemblyPropertiesViewer.ViewModel
     {
         private readonly IAssemblyAnalysisService analysisService;
 
-        private IEnumerable<AnalysisResult> assemblyAnalysisResults;
+        private readonly IWindowService windowService;
 
         public RelayCommand<DragEventArgs> DropAssemblyCommand { get; private set; }
-
+        
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
-        public MainViewModel(IAssemblyAnalysisService analysisService)
+        public MainViewModel(IAssemblyAnalysisService analysisService, IWindowService windowService)
         {
             if (IsInDesignMode)
                 return;
 
             this.analysisService = analysisService;
+            this.windowService = windowService;
 
             DropAssemblyCommand = new RelayCommand<DragEventArgs>(AnalyzeDroppedAssembly);
         }
@@ -53,15 +50,11 @@ namespace AssemblyPropertiesViewer.ViewModel
 
             long fileSize = analysisService.GetFileSize(filePath);
             var assemblyAnalysisResults = analysisService.InspectAssembly(filePath);
-
             var assemblyPropertiesViewModel = new PropertiesViewModel(filePath, fileSize, assemblyAnalysisResults);
-            ShowAnalysisResults(filePath, assemblyPropertiesViewModel);
-        }
 
-        private void ShowAnalysisResults(string filePath, PropertiesViewModel assemblyPropertiesViewModel)
-        {
-            Messenger.Default.Send(new ShowPropertiesMessage(assemblyPropertiesViewModel));
+            windowService.OpenChildWindow<PropertiesWindow>((arg.Source as DependencyObject), assemblyPropertiesViewModel);
         }
+        
 
         private string GetFilePathForDroppedFileData(IDataObject droppedFileData)
         {
