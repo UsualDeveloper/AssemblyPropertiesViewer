@@ -6,13 +6,13 @@
         xmlns:local="clr-namespace:AssemblyPropertiesViewer"
         mc:Ignorable="d" 
         ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"
-        Title="{Binding AssemblyName}" 
+        Title="{Binding AssemblyName, StringFormat='{}Assembly: {0}'}" 
         DataContext="{Binding PropertiesWindowViewModel, Source={StaticResource Locator}}" 
         Height="300" 
         Width="500">
     <StackPanel Orientation="Vertical">
-        <TextBlock Text="File name:" FontWeight="Bold" />
-        <TextBlock Text="{Binding AssemblyName}" ToolTip="{Binding AssemblyName}" Margin="0, 0, 0, 10" />
+        <TextBlock Text="File path:" FontWeight="Bold" />
+        <TextBlock Text="{Binding AssemblyPath}" ToolTip="{Binding AssemblyPath}" Margin="0, 0, 0, 10" TextWrapping="Wrap" />
         <TextBlock Text="File size (bytes):" FontWeight="Bold" />
         <TextBlock Text="{Binding AssemblySize}" Margin="0, 0, 0, 10" />
         <DataGrid ItemsSource="{Binding AssemblyAnalysisResults}" AutoGenerateColumns="False" 
