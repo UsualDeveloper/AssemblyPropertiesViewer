@@ -13,9 +13,8 @@ namespace AssemblyPropertiesViewer.Analyzers.BasicAnalyzers
         public AnalysisResult Analyze(Assembly assembly)
         {
             var result = new AnalysisResult("Target framework");
-
             var assemblyTargetFramework = GetAssemblyAttributeConstructorArgumentValueOrDefault<TargetFrameworkAttribute, string>(assembly, 0);
-            result.Value = assemblyTargetFramework;
+            result.Value = $"{assemblyTargetFramework} (image runtime version: {assembly.ImageRuntimeVersion})";
 
             return result;
         }
