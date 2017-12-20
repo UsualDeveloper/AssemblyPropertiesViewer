@@ -11,6 +11,7 @@ namespace AssemblyPropertiesViewer.Analyzers.Loader
     public class AssemblyProxy : MarshalByRefObject
     {
         Assembly loadedAssembly;
+        IEnumerable<Assembly> referencedAssemblies;
 
         private const string BadImageExceptionMessage = "The specific file in not in a supported format and cannot be loaded. Please verify if the file is a valid assembly.";
 
@@ -65,7 +66,34 @@ namespace AssemblyPropertiesViewer.Analyzers.Loader
         private void LoadAssemblyIntoReflectionOnlyContext(string filePath)
         {
             loadedAssembly = Assembly.ReflectionOnlyLoadFrom(filePath);
-            bool t = AppDomain.CurrentDomain.IsFullyTrusted;
+            
+            // preload referenced assemblies, because in a limited privileges context assembly resolving event cannot be used
+            LoadReferencedAssembliesIntoContext(loadedAssembly);
+        }
+
+        private void LoadReferencedAssembliesIntoContext(Assembly loadedAssembly)
+        {
+            var referencedAssemblies = new List<Assembly>();
+
+            AssemblyName[] referencedAssemblyNames = loadedAssembly.GetReferencedAssemblies();
+
+            if (referencedAssemblyNames == null)
+                return;
+
+            // TODO: verify
+            foreach (var a in referencedAssemblyNames)
+            {
+                try
+                {
+                    referencedAssemblies.Add(Assembly.ReflectionOnlyLoad(a.FullName));
+                }
+                catch (Exception err)
+                {
+                    // TODO: handle this as a warning message in the analysis results
+                }
+            }
+
+            this.referencedAssemblies = referencedAssemblies;
         }
 
         private AnalysisResult InspectAssemblyWithAnalyzer(IAssemblyAnalyzer analyzer)
