@@ -4,6 +4,7 @@ using GalaSoft.MvvmLight.Command;
 using System;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 
 namespace AssemblyPropertiesViewer.ViewModel
 {
@@ -25,8 +26,37 @@ namespace AssemblyPropertiesViewer.ViewModel
 
         private readonly IWindowService windowService;
 
+        private readonly ContextMenuViewModel contextMenuVM;
+
         public RelayCommand<DragEventArgs> DropAssemblyCommand { get; private set; }
+
+        public ICommand ToggleTitleBarVisibilityCommand { get; private set; }
+
+        public ICommand CloseApplicationCommand { get; private set; }
+
+        public ICommand AnalyzeAssemblyCommand { get; private set; }
         
+        public bool IsAnalysisInProgress
+        {
+            get
+            {
+                lock (instanceAnalysisLock)
+                {
+                    return isAnalysisInProgress;
+                }
+            }
+            set
+            {
+                lock (instanceAnalysisLock)
+                {
+                    isAnalysisInProgress = value;
+                }
+            }
+        }
+        private bool isAnalysisInProgress = false;
+
+        private object instanceAnalysisLock = new object();
+
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
@@ -38,12 +68,52 @@ namespace AssemblyPropertiesViewer.ViewModel
             this.analysisService = analysisService;
             this.windowService = windowService;
 
+            this.contextMenuVM = new ContextMenuViewModel(this);
+
             DropAssemblyCommand = new RelayCommand<DragEventArgs>(AnalyzeDroppedAssembly);
+
+            ToggleTitleBarVisibilityCommand = contextMenuVM.ToggleTitleBarVisibilityCommand;
+            CloseApplicationCommand = contextMenuVM.CloseApplicationCommand;
+            AnalyzeAssemblyCommand = contextMenuVM.AnalyzeAssemblyCommand;
         }
-        
+
         private void AnalyzeDroppedAssembly(DragEventArgs arg)
         {
             string filePath = GetFilePathForDroppedFileData(arg.Data);
+
+            AnalyzeAssembly(filePath, arg.Source as DependencyObject);
+        }
+
+        private void SelectAndAnalyzeAssembly(DependencyObject sourceVisualElement)
+        {
+            const string FileOpenDlgTypeFilteringString = "Assemblies (*.dll)|*.dll|All files (*.*)|*.*";
+
+            string selectedFilePath = windowService.OpenFileSelectionDialog(sourceVisualElement, FileOpenDlgTypeFilteringString);
+
+            if (string.IsNullOrEmpty(selectedFilePath))
+                return;
+
+            AnalyzeAssembly(selectedFilePath, sourceVisualElement);
+        }
+
+        private string GetFilePathForDroppedFileData(IDataObject droppedFileData)
+        {
+            const string FileNameFormat = "FileNameW";
+
+            if (!droppedFileData.GetDataPresent(FileNameFormat, false))
+                return string.Empty;
+
+            return Convert.ToString((droppedFileData.GetData(FileNameFormat) as string[]).Single());
+        }
+
+        private void AnalyzeAssembly(string filePath, DependencyObject visualElementInvokingAnalysis)
+        {
+            if (IsAnalysisInProgress)
+            {
+                throw new InvalidOperationException("Analysis of an assembly is already in progress.");
+            }
+
+            IsAnalysisInProgress = true;
 
             if (string.IsNullOrEmpty(filePath))
                 return;
@@ -52,18 +122,40 @@ namespace AssemblyPropertiesViewer.ViewModel
             var assemblyAnalysisResults = analysisService.InspectAssembly(filePath);
             var assemblyPropertiesViewModel = new PropertiesViewModel(filePath, fileSize, assemblyAnalysisResults);
 
-            windowService.OpenChildWindow<PropertiesWindow>((arg.Source as DependencyObject), assemblyPropertiesViewModel);
+            windowService.OpenChildWindow<PropertiesWindow>(visualElementInvokingAnalysis, assemblyPropertiesViewModel);
+
+            IsAnalysisInProgress = false;
         }
-        
 
-        private string GetFilePathForDroppedFileData(IDataObject droppedFileData)
+        protected class ContextMenuViewModel
         {
-            const string fileNameFormat = "FileNameW";
+            public ICommand ToggleTitleBarVisibilityCommand { get; private set; }
+            public ICommand CloseApplicationCommand { get; private set; }
+            public ICommand AnalyzeAssemblyCommand { get; private set; }
 
-            if (!droppedFileData.GetDataPresent(fileNameFormat, false))
-                return string.Empty;
+            MainViewModel mainWindowViewModel;
 
-            return Convert.ToString((droppedFileData.GetData(fileNameFormat) as string[]).Single());
+            public ContextMenuViewModel(MainViewModel mainWindowViewModel)
+            {
+                this.mainWindowViewModel = mainWindowViewModel;
+
+                InitializeCommands();
+            }
+
+            private void InitializeCommands()
+            {
+                ToggleTitleBarVisibilityCommand = new RelayCommand<Window>(
+                                                                    (Window window) => { window.WindowStyle = (window.WindowStyle != WindowStyle.None) ? WindowStyle.None : WindowStyle.SingleBorderWindow; },
+                                                                    (Window window) => window.IsInitialized);
+
+                CloseApplicationCommand  = new RelayCommand(
+                                                        () => { App.Current.Shutdown(); },
+                                                        () => true);
+
+                AnalyzeAssemblyCommand = new RelayCommand<DependencyObject>(
+                                                (DependencyObject sourceVisualElement) => { mainWindowViewModel.SelectAndAnalyzeAssembly(sourceVisualElement); },
+                                                (DependencyObject sourceVisualElement) => !mainWindowViewModel.IsAnalysisInProgress);
+            }
         }
     }
 }

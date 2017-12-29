@@ -16,6 +16,16 @@
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </Window.Resources>
+    <Window.ContextMenu>
+        <ContextMenu>
+            <MenuItem Header="Select assembly to analyze..." Command="{Binding Path=AnalyzeAssemblyCommand}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}" />
+            <Separator />
+            <MenuItem Header="Show / Hide window title bar" Command="{Binding Path=ToggleTitleBarVisibilityCommand}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}" />
+            <!--<MenuItem Header="Alayze folder with search criteria..." />-->
+                <Separator />
+            <MenuItem Header="Exit" Command="{Binding Path=CloseApplicationCommand}" />
+        </ContextMenu>
+    </Window.ContextMenu>
     <Grid>
         <Grid Margin="0">
             <TextBlock Padding="20" x:Name="textBlock" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextWrapping="Wrap" TextAlignment="Center" 
@@ -29,20 +39,6 @@
 
             <Rectangle Stroke="#AA000000" StrokeThickness="2" StrokeDashArray="3 5" Margin="10" />
 
-            <!--<Rectangle Stroke="#AA000000" StrokeThickness="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="20" Height="20">
-                <Rectangle.Fill>
-                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0,0">
-                        <GradientStop Color="#FFD0D0D0" Offset="0"/>
-                        <GradientStop Color="#FF000000" Offset="0.9"/>
-                    </LinearGradientBrush>
-                </Rectangle.Fill>
-            </Rectangle>
-
-            <Rectangle HorizontalAlignment="Right" VerticalAlignment="Bottom" StrokeThickness="0" Width="10" Height="10" Margin="5">
-                <Rectangle.Fill>
-                    <SolidColorBrush Color="#AA000000" />
-                </Rectangle.Fill>
-            </Rectangle>-->
         </Grid>
         <Border BorderBrush="#FF000000" BorderThickness="2">
             <Border.Effect>
