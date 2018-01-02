@@ -16,6 +16,28 @@ namespace AssemblyPropertiesViewer.Services
 
         private ILogger logger;
 
+        public bool IsAnalysisInProgress
+        {
+            get
+            {
+                lock (instanceAnalysisLock)
+                {
+                    return isAnalysisInProgress;
+                }
+            }
+            private set
+            {
+                lock (instanceAnalysisLock)
+                {
+                    isAnalysisInProgress = value;
+                }
+            }
+        }
+        
+        private bool isAnalysisInProgress = false;
+
+        private object instanceAnalysisLock = new object();
+
         public RestrictedAppDomainAnalysisService(ILogger logger)
         {
             this.logger = logger;
@@ -25,25 +47,39 @@ namespace AssemblyPropertiesViewer.Services
 
         public IEnumerable<AnalysisResult> InspectAssembly(string assemblyFilePath)
         {
-            logger.Info($"Started analysis of assembly {assemblyFilePath}...");
-            logger.Info("Creating analysis sandbox...");
+            try
+            {
+                if (IsAnalysisInProgress)
+                {
+                    throw new InvalidOperationException("Analysis of an assembly is already in progress.");
+                }
 
-            var appDomainSetup = new AppDomainSetup();
-            // TODO: to be verified
-            appDomainSetup.ApplicationBase = Path.GetFullPath(@"./Analyzers/");
+                IsAnalysisInProgress = true;
 
-            var permissionSet = GetRestrictedPermissionSet(assemblyFilePath);
-            var testDomain = AppDomain.CreateDomain("testDomain", null, appDomainSetup, permissionSet, null);
-            var proxy = GetAssemblyAnalyzingProxyForSeparateAppDomain(testDomain, assemblyFilePath);
+                logger.Info($"Started analysis of assembly {assemblyFilePath}...");
+                logger.Info("Creating analysis sandbox...");
 
-            logger.Info("Inspecting assemblies with available analyzers...");
-            var analysisResults = proxy.InspectAssembly(assemblyFilePath);
+                var appDomainSetup = new AppDomainSetup();
+                // TODO: to be verified
+                appDomainSetup.ApplicationBase = Path.GetFullPath(@"./Analyzers/");
 
-            logger.Info("Closing the sandbox...");
-            AppDomain.Unload(testDomain);
+                var permissionSet = GetRestrictedPermissionSet(assemblyFilePath);
+                var testDomain = AppDomain.CreateDomain("testDomain", null, appDomainSetup, permissionSet, null);
+                var proxy = GetAssemblyAnalyzingProxyForSeparateAppDomain(testDomain, assemblyFilePath);
 
-            logger.Info("Assembly analysis completed successfully.");
-            return analysisResults;
+                logger.Info("Inspecting assemblies with available analyzers...");
+                var analysisResults = proxy.InspectAssembly(assemblyFilePath);
+
+                logger.Info("Closing the sandbox...");
+                AppDomain.Unload(testDomain);
+                
+                logger.Info("Assembly analysis completed successfully.");
+                return analysisResults;
+            }
+            finally
+            {
+                IsAnalysisInProgress = false;
+            }
         }
 
         public long GetFileSize(string filePath)

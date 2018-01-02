@@ -38,24 +38,8 @@ namespace AssemblyPropertiesViewer.ViewModel
         
         public bool IsAnalysisInProgress
         {
-            get
-            {
-                lock (instanceAnalysisLock)
-                {
-                    return isAnalysisInProgress;
-                }
-            }
-            set
-            {
-                lock (instanceAnalysisLock)
-                {
-                    isAnalysisInProgress = value;
-                }
-            }
+            get { return analysisService.IsAnalysisInProgress; }
         }
-        private bool isAnalysisInProgress = false;
-
-        private object instanceAnalysisLock = new object();
 
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
@@ -108,13 +92,6 @@ namespace AssemblyPropertiesViewer.ViewModel
 
         private void AnalyzeAssembly(string filePath, DependencyObject visualElementInvokingAnalysis)
         {
-            if (IsAnalysisInProgress)
-            {
-                throw new InvalidOperationException("Analysis of an assembly is already in progress.");
-            }
-
-            IsAnalysisInProgress = true;
-
             if (string.IsNullOrEmpty(filePath))
                 return;
 
@@ -123,8 +100,6 @@ namespace AssemblyPropertiesViewer.ViewModel
             var assemblyPropertiesViewModel = new PropertiesViewModel(filePath, fileSize, assemblyAnalysisResults);
 
             windowService.OpenChildWindow<PropertiesWindow>(visualElementInvokingAnalysis, assemblyPropertiesViewModel);
-
-            IsAnalysisInProgress = false;
         }
 
         protected class ContextMenuViewModel
