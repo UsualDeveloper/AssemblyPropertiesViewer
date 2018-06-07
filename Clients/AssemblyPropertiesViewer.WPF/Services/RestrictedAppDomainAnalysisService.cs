@@ -59,13 +59,8 @@ namespace AssemblyPropertiesViewer.Services
                 logger.Info($"Started analysis of assembly {assemblyFilePath}...");
                 logger.Info("Creating analysis sandbox...");
 
-                var appDomainSetup = new AppDomainSetup();
-                // TODO: to be verified
-                appDomainSetup.ApplicationBase = Path.GetFullPath(@"./Analyzers/");
-
-                var permissionSet = GetRestrictedPermissionSet(assemblyFilePath);
-                var testDomain = AppDomain.CreateDomain("testDomain", null, appDomainSetup, permissionSet, null);
-                var proxy = GetAssemblyAnalyzingProxyForSeparateAppDomain(testDomain, assemblyFilePath);
+                var testDomain = CreateDomainWithRestrictedPermissions(assemblyFilePath);
+                var proxy = GetAssemblyAnalyzingProxyForSeparateAppDomain(testDomain);
 
                 logger.Info("Inspecting assemblies with available analyzers...");
                 var analysisResults = proxy.InspectAssembly(assemblyFilePath);
@@ -82,23 +77,59 @@ namespace AssemblyPropertiesViewer.Services
             }
         }
 
+        private AppDomain CreateDomainWithRestrictedPermissions(string additionalReadAccessAssemblyFilePath = null)
+        {
+            var appDomainSetup = new AppDomainSetup();
+            // TODO: to be verified
+            appDomainSetup.ApplicationBase = Path.GetFullPath(@"./Analyzers/");
+
+            var permissionSet = GetRestrictedPermissionSet(additionalReadAccessAssemblyFilePath);
+            return AppDomain.CreateDomain("testDomain", null, appDomainSetup, permissionSet, null);
+        }
+
         public long GetFileSize(string filePath)
         {
             var fileInfo = new FileInfo(filePath);
             return fileInfo.Length;
         }
 
-        private PermissionSet GetRestrictedPermissionSet(string assemblyFilePath)
+        public void InspectFolderAndFilterResults(string searchFolderPath, bool searchRecursively, IReadOnlyDictionary<Type, IEnumerable<ISearchFilter>> searchCriteria)
+        {
+            // TODO: implement
+            return;
+        }
+
+        public IReadOnlyDictionary<Type, IEnumerable<ISearchFilter>> GetAvailableSearchFilters()
+        {
+            logger.Info("Creating analysis sandbox...");
+
+            var testDomain = CreateDomainWithRestrictedPermissions();
+            var proxy = GetAssemblyAnalyzingProxyForSeparateAppDomain(testDomain);
+
+            logger.Info("Retrieving available search filters...");
+            var filters = proxy.GetAvailableSearchFilters();
+
+            logger.Info("Closing the sandbox...");
+            AppDomain.Unload(testDomain);
+
+            return filters;
+        }
+
+        private PermissionSet GetRestrictedPermissionSet(string additionalReadAccessAssemblyFilePath = null)
         {
             //create restricted permission set, based on https://msdn.microsoft.com/en-us/library/bb763046(v=vs.110).aspx
             var permissionSet = new PermissionSet(PermissionState.None);
             permissionSet.AddPermission(new SecurityPermission(SecurityPermissionFlag.Execution));
-            permissionSet.AddPermission(new FileIOPermission(FileIOPermissionAccess.Read | FileIOPermissionAccess.PathDiscovery, assemblyFilePath));
+
+            if (!string.IsNullOrEmpty(additionalReadAccessAssemblyFilePath))
+            {
+                permissionSet.AddPermission(new FileIOPermission(FileIOPermissionAccess.Read | FileIOPermissionAccess.PathDiscovery, additionalReadAccessAssemblyFilePath));
+            }
 
             return permissionSet;
         }
 
-        private AssemblyProxy GetAssemblyAnalyzingProxyForSeparateAppDomain(AppDomain appDomain, string filePath)
+        private AssemblyProxy GetAssemblyAnalyzingProxyForSeparateAppDomain(AppDomain appDomain)
         {
             return (AssemblyProxy)appDomain.CreateInstanceAndUnwrap(ProxyType.Assembly.FullName, ProxyType.FullName);
         }

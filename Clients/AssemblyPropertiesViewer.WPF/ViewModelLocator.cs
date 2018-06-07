@@ -48,11 +48,13 @@ namespace AssemblyPropertiesViewer
             SimpleIoc.Default.Register<IAssemblyAnalysisService, RestrictedAppDomainAnalysisService>();
             SimpleIoc.Default.Register<ILogger, BasicLogger>();
             SimpleIoc.Default.Register<IWindowService, WindowService>();
+            SimpleIoc.Default.Register<IFilteringControlCreationService, FilterDefinitionControlCreationVisitor>();
         }
 
         private void RegisterViewModels()
         {
             SimpleIoc.Default.Register<MainViewModel>();
+            SimpleIoc.Default.Register<FolderSearchCriteriaViewModel>();
         }
         
         // TODO: make this part of code more open to extending with other view models
@@ -63,7 +65,15 @@ namespace AssemblyPropertiesViewer
                 return SimpleIoc.Default.GetInstance<MainViewModel>();
             }
         }
-        
+
+        public FolderSearchCriteriaViewModel FolderSearchCriteriaViewModel
+        {
+            get
+            {
+                return SimpleIoc.Default.GetInstance<FolderSearchCriteriaViewModel>();
+            }
+        }
+
         public static void Cleanup()
         {
             SimpleIoc.Default.Unregister<IAssemblyAnalysisService>();

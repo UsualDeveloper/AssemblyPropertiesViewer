@@ -42,6 +42,19 @@ namespace AssemblyPropertiesViewer.Analyzers.Loader
             return analysisResults;
         }
 
+        public IReadOnlyDictionary<Type, IEnumerable<ISearchFilter>> GetAvailableSearchFilters()
+        {
+            var filters = new Dictionary<Type, IEnumerable<ISearchFilter>>();
+            
+            var assemblyAnalyzers = GetAnalyzers();
+            foreach (var analyzer in assemblyAnalyzers)
+            {
+                filters.Add(analyzer.GetType(), analyzer.GetSearchFilters());
+            }
+
+            return filters;
+        }
+
         private IEnumerable<IAssemblyAnalyzer> GetAnalyzers()
         {
             var analyzersCollection = new List<IAssemblyAnalyzer>();

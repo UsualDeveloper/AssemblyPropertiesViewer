@@ -19,10 +19,10 @@
     <Window.ContextMenu>
         <ContextMenu>
             <MenuItem Header="Select assembly to analyze..." Command="{Binding Path=AnalyzeAssemblyCommand}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}" />
+            <MenuItem Header="Alayze folder with search criteria..." Command="{Binding Path=AnalyzeFolderCommand}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}" />
             <Separator />
             <MenuItem Header="Show / Hide window title bar" Command="{Binding Path=ToggleTitleBarVisibilityCommand}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}" />
-            <!--<MenuItem Header="Alayze folder with search criteria..." />-->
-                <Separator />
+            <Separator />
             <MenuItem Header="Exit" Command="{Binding Path=CloseApplicationCommand}" />
         </ContextMenu>
     </Window.ContextMenu>

@@ -4,6 +4,7 @@ using AssemblyPropertiesViewer.Analyzers.Models;
 using System.Diagnostics;
 using System.Reflection;
 using static System.Diagnostics.DebuggableAttribute;
+using System.Collections.Generic;
 
 namespace AssemblyPropertiesViewer.Analyzers.BasicAnalyzers
 {
@@ -19,6 +20,15 @@ namespace AssemblyPropertiesViewer.Analyzers.BasicAnalyzers
             return result;
         }
 
+        public override IEnumerable<ISearchFilter> GetSearchFilters()
+        {
+            var filters = new List<ISearchFilter>();
+
+            filters.Add(new BooleanFilter("IsInDebugMode", "Filter selecting assemblies compiled in \"debug mode\" or in \"release mode\"."));
+
+            return filters;
+        }
+
         private bool IsAssemblyCompiledInDebugMode(Assembly assembly)
         {
             // https://msdn.microsoft.com/en-us/library/system.diagnostics.debuggableattribute.debuggingmodes(v=vs.110).aspx
@@ -28,7 +38,5 @@ namespace AssemblyPropertiesViewer.Analyzers.BasicAnalyzers
             
             return debuggingFlags.HasFlag(DebuggingModes.Default | DebuggingModes.DisableOptimizations);
         }
-
-        
     }
 }

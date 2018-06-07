@@ -1,3 +1,4 @@
+using AssemblyPropertiesViewer.Services;
 using AssemblyPropertiesViewer.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -35,7 +36,9 @@ namespace AssemblyPropertiesViewer.ViewModel
         public ICommand CloseApplicationCommand { get; private set; }
 
         public ICommand AnalyzeAssemblyCommand { get; private set; }
-        
+
+        public ICommand AnalyzeFolderCommand { get; private set; }
+
         public bool IsAnalysisInProgress
         {
             get { return analysisService.IsAnalysisInProgress; }
@@ -59,6 +62,7 @@ namespace AssemblyPropertiesViewer.ViewModel
             ToggleTitleBarVisibilityCommand = contextMenuVM.ToggleTitleBarVisibilityCommand;
             CloseApplicationCommand = contextMenuVM.CloseApplicationCommand;
             AnalyzeAssemblyCommand = contextMenuVM.AnalyzeAssemblyCommand;
+            AnalyzeFolderCommand = contextMenuVM.AnalyzeFolderCommand;
         }
 
         private void AnalyzeDroppedAssembly(DragEventArgs arg)
@@ -78,6 +82,25 @@ namespace AssemblyPropertiesViewer.ViewModel
                 return;
 
             AnalyzeAssembly(selectedFilePath, sourceVisualElement);
+        }
+
+        private void FindAssembliesByAnalysisResults(DependencyObject sourceVisualElement)
+        {
+            //TODO: invoke searching automatically if someone drags and drops a folder onto the main window
+            string searchFolderPath = windowService.OpenFolderSelectionDialog(sourceVisualElement);
+
+            if (string.IsNullOrEmpty(searchFolderPath))
+                return;
+
+            //TODO: replace with a proper view model transition
+            var searchViewModel = new FolderSearchCriteriaViewModel(new FilterDefinitionControlCreationVisitor());
+            searchViewModel.SearchCriteria = analysisService.GetAvailableSearchFilters();
+            
+            // if defining search filtering values was cancelled
+            if (!windowService.OpenChildDialogWithResult<FolderSearchCriteriaWindow>(sourceVisualElement, searchViewModel))
+                return;
+
+            analysisService.InspectFolderAndFilterResults(searchFolderPath, searchViewModel.SearchRecursively, searchViewModel.SearchCriteria);
         }
 
         private string GetFilePathForDroppedFileData(IDataObject droppedFileData)
@@ -107,6 +130,7 @@ namespace AssemblyPropertiesViewer.ViewModel
             public ICommand ToggleTitleBarVisibilityCommand { get; private set; }
             public ICommand CloseApplicationCommand { get; private set; }
             public ICommand AnalyzeAssemblyCommand { get; private set; }
+            public ICommand AnalyzeFolderCommand { get; private set; }
 
             MainViewModel mainWindowViewModel;
 
@@ -129,6 +153,10 @@ namespace AssemblyPropertiesViewer.ViewModel
 
                 AnalyzeAssemblyCommand = new RelayCommand<DependencyObject>(
                                                 (DependencyObject sourceVisualElement) => { mainWindowViewModel.SelectAndAnalyzeAssembly(sourceVisualElement); },
+                                                (DependencyObject sourceVisualElement) => !mainWindowViewModel.IsAnalysisInProgress);
+
+                AnalyzeFolderCommand = new RelayCommand<DependencyObject>(
+                                                (DependencyObject sourceVisualElement) => { mainWindowViewModel.FindAssembliesByAnalysisResults(sourceVisualElement); },
                                                 (DependencyObject sourceVisualElement) => !mainWindowViewModel.IsAnalysisInProgress);
             }
         }

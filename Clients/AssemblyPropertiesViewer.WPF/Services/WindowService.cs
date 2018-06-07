@@ -11,14 +11,16 @@ namespace AssemblyPropertiesViewer.Services
     {
         public void OpenChildWindow<T>(DependencyObject elementInParentWindow, object dataContext) where T : Window, new()
         {
-            var parentWindow = GetWindowByContainedElement(elementInParentWindow);
-
-            var childWindow = new T();
-
-            childWindow.Owner = parentWindow;
-            childWindow.DataContext = dataContext;
+            var childWindow = SetupChildWindowInstance<T>(elementInParentWindow, dataContext);
 
             childWindow.Show();
+        }
+
+        public bool OpenChildDialogWithResult<T>(DependencyObject elementInParentWindow, object dataContext) where T : Window, new()
+        {
+            var childWindow = SetupChildWindowInstance<T>(elementInParentWindow, dataContext);
+
+            return childWindow.ShowDialog() ?? false;
         }
 
         /// <summary>
@@ -56,6 +58,49 @@ namespace AssemblyPropertiesViewer.Services
             }
 
             return string.Empty;
+        }
+
+        /// <summary>
+        /// Opens folder selection dialog.
+        /// </summary>
+        /// <param name="elementInOwnerWindow">DependencyObject attached to the window to be set as owner of the file selection dialog.</param>
+        /// <returns>Path to the selected folder or an empty string, when no path is selected.</returns>
+        public string OpenFolderSelectionDialog(DependencyObject elementInOwnerWindow)
+        {
+            var parentWindow = GetWindowByContainedElement(elementInOwnerWindow);
+            var win32Window = GetWinFormsIWin32WindowFromWpfWindow(parentWindow);
+
+            var folderSelectionDlg = new System.Windows.Forms.FolderBrowserDialog();
+            folderSelectionDlg.ShowNewFolderButton = false;
+
+            if (folderSelectionDlg.ShowDialog(win32Window) == System.Windows.Forms.DialogResult.OK)
+            {
+                return folderSelectionDlg.SelectedPath;
+            }
+
+            return string.Empty;
+        }
+
+        private T SetupChildWindowInstance<T>(DependencyObject elementInParentWindow, object dataContext) where T : Window, new()
+        {
+            var parentWindow = GetWindowByContainedElement(elementInParentWindow);
+
+            var childWindow = new T();
+
+            childWindow.Owner = parentWindow;
+            childWindow.DataContext = dataContext;
+
+            return childWindow;
+        }
+
+        private System.Windows.Forms.IWin32Window GetWinFormsIWin32WindowFromWpfWindow(Window window)
+        {
+            var windowHandle = (new System.Windows.Interop.WindowInteropHelper(window)).Handle;
+
+            var win32Window = new System.Windows.Forms.NativeWindow();
+            win32Window.AssignHandle(windowHandle);
+
+            return win32Window;
         }
 
         private string CreateFiltersString(IReadOnlyDictionary<string, string> filtersCollection)
