@@ -82,7 +82,9 @@
     <Compile Include="PropertiesWindow.xaml.cs">
       <DependentUpon>PropertiesWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Services\ApplicationControlService.cs" />
     <Compile Include="Services\FilterDefinitionControlCreationVisitor.cs" />
+    <Compile Include="Services\Interfaces\IApplicationControlService.cs" />
     <Compile Include="Services\Interfaces\IAssemblyAnalysisService.cs" />
     <Compile Include="Services\Interfaces\IFilteringControlCreationService.cs" />
     <Compile Include="Services\Interfaces\IWindowService.cs" />

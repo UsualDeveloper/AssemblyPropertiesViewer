@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 
 namespace AssemblyPropertiesViewer.ViewModel
 {
@@ -27,9 +28,10 @@ namespace AssemblyPropertiesViewer.ViewModel
         IReadOnlyDictionary<Type, IEnumerable<ISearchFilter>> searchCriteria;
         public bool SearchRecursively { get; set; } = true;
 
-        public RelayCommand<RoutedEventArgs> StartFolderSearchCommand { get; private set; }
+        public ICommand StartFolderSearchCommand { get; private set; }
 
         private readonly IFilteringControlCreationService fieldDefinitionVisitor;
+        private readonly IWindowService windowService;
 
         public Dictionary<Type, List<FilterDefinitionItemControl>> FilteringControls
         {
@@ -38,16 +40,17 @@ namespace AssemblyPropertiesViewer.ViewModel
 
         private Dictionary<Type, List<FilterDefinitionItemControl>> filteringControls = new Dictionary<Type, List<FilterDefinitionItemControl>>();
 
-        public FolderSearchCriteriaViewModel(IFilteringControlCreationService fieldDefinitionVisitor)
+        public FolderSearchCriteriaViewModel(IFilteringControlCreationService fieldDefinitionVisitor, IWindowService windowService)
         {
             this.fieldDefinitionVisitor = fieldDefinitionVisitor;
+            this.windowService = windowService;
 
-            this.StartFolderSearchCommand = new RelayCommand<RoutedEventArgs>(StartFolderSearchProcess);
+            this.StartFolderSearchCommand = new RelayCommand<Window>(StartFolderSearchProcess);
         }
 
-        private void StartFolderSearchProcess(RoutedEventArgs e)
+        private void StartFolderSearchProcess(Window window)
         {
-
+            windowService.CloseWindowWithResult(window, true);
         }
 
         void UpdateFilterControls()

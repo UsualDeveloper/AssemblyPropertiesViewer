@@ -56,7 +56,7 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
         <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Button Content="Search" Command="{Binding StartFolderSearchCommand}" />
+            <Button Content="Search" Command="{Binding StartFolderSearchCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
         </StackPanel>
     </Grid>
 </Window>

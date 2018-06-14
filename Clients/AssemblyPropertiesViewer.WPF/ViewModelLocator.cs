@@ -48,6 +48,7 @@ namespace AssemblyPropertiesViewer
             SimpleIoc.Default.Register<IAssemblyAnalysisService, RestrictedAppDomainAnalysisService>();
             SimpleIoc.Default.Register<ILogger, BasicLogger>();
             SimpleIoc.Default.Register<IWindowService, WindowService>();
+            SimpleIoc.Default.Register<IApplicationControlService, ApplicationControlService>();
             SimpleIoc.Default.Register<IFilteringControlCreationService, FilterDefinitionControlCreationVisitor>();
         }
 

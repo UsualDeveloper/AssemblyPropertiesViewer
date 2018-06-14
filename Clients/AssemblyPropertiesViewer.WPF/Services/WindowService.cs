@@ -81,6 +81,19 @@ namespace AssemblyPropertiesViewer.Services
             return string.Empty;
         }
 
+        public void CloseWindowWithResult(Window window, bool setDialogActionConfirmation = false)
+        {
+            if (window == null)
+                throw new ArgumentException(nameof(window));
+            
+            if (setDialogActionConfirmation)
+            {
+                window.DialogResult = true;
+            }
+
+            window.Close();
+        }
+
         private T SetupChildWindowInstance<T>(DependencyObject elementInParentWindow, object dataContext) where T : Window, new()
         {
             var parentWindow = GetWindowByContainedElement(elementInParentWindow);

@@ -27,6 +27,8 @@ namespace AssemblyPropertiesViewer.ViewModel
 
         private readonly IWindowService windowService;
 
+        private readonly IApplicationControlService appCtrlService;
+
         private readonly ContextMenuViewModel contextMenuVM;
 
         public RelayCommand<DragEventArgs> DropAssemblyCommand { get; private set; }
@@ -47,15 +49,16 @@ namespace AssemblyPropertiesViewer.ViewModel
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
-        public MainViewModel(IAssemblyAnalysisService analysisService, IWindowService windowService)
+        public MainViewModel(IAssemblyAnalysisService analysisService, IWindowService windowService, IApplicationControlService appCtrlService)
         {
             if (IsInDesignMode)
                 return;
 
             this.analysisService = analysisService;
             this.windowService = windowService;
+            this.appCtrlService = appCtrlService;
 
-            this.contextMenuVM = new ContextMenuViewModel(this);
+            this.contextMenuVM = new ContextMenuViewModel(this, appCtrlService);
 
             DropAssemblyCommand = new RelayCommand<DragEventArgs>(AnalyzeDroppedAssembly);
 
@@ -93,7 +96,7 @@ namespace AssemblyPropertiesViewer.ViewModel
                 return;
 
             //TODO: replace with a proper view model transition
-            var searchViewModel = new FolderSearchCriteriaViewModel(new FilterDefinitionControlCreationVisitor());
+            var searchViewModel = new FolderSearchCriteriaViewModel(new FilterDefinitionControlCreationVisitor(), this.windowService);
             searchViewModel.SearchCriteria = analysisService.GetAvailableSearchFilters();
             
             // if defining search filtering values was cancelled
@@ -132,23 +135,28 @@ namespace AssemblyPropertiesViewer.ViewModel
             public ICommand AnalyzeAssemblyCommand { get; private set; }
             public ICommand AnalyzeFolderCommand { get; private set; }
 
+            private readonly IApplicationControlService appCtrlService;
+
             MainViewModel mainWindowViewModel;
 
-            public ContextMenuViewModel(MainViewModel mainWindowViewModel)
+            public ContextMenuViewModel(MainViewModel mainWindowViewModel, IApplicationControlService appCtrlService)
             {
                 this.mainWindowViewModel = mainWindowViewModel;
+
+                this.appCtrlService = appCtrlService;
 
                 InitializeCommands();
             }
 
             private void InitializeCommands()
             {
+                // TODO: change not to interact with window directly
                 ToggleTitleBarVisibilityCommand = new RelayCommand<Window>(
                                                                     (Window window) => { window.WindowStyle = (window.WindowStyle != WindowStyle.None) ? WindowStyle.None : WindowStyle.SingleBorderWindow; },
                                                                     (Window window) => window.IsInitialized);
 
                 CloseApplicationCommand  = new RelayCommand(
-                                                        () => { App.Current.Shutdown(); },
+                                                        () => { appCtrlService.CloseApplication(); },
                                                         () => true);
 
                 AnalyzeAssemblyCommand = new RelayCommand<DependencyObject>(
