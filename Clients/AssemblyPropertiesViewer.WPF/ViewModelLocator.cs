@@ -15,6 +15,7 @@
 using AssemblyPropertiesViewer.Core.Interfaces;
 using AssemblyPropertiesViewer.Core.Logger;
 using AssemblyPropertiesViewer.Services;
+using AssemblyPropertiesViewer.Services.Filtering;
 using AssemblyPropertiesViewer.Services.Interfaces;
 using AssemblyPropertiesViewer.ViewModel;
 using GalaSoft.MvvmLight;

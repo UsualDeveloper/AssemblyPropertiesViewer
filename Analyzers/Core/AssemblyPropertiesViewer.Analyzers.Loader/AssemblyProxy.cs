@@ -100,7 +100,7 @@ namespace AssemblyPropertiesViewer.Analyzers.Loader
                 {
                     referencedAssemblies.Add(Assembly.ReflectionOnlyLoad(a.FullName));
                 }
-                catch (Exception err)
+                catch (Exception)
                 {
                     // TODO: handle this as a warning message in the analysis results
                 }

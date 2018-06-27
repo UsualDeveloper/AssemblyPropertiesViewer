@@ -3,12 +3,13 @@ using AssemblyPropertiesViewer.Services.Interfaces;
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 
-namespace AssemblyPropertiesViewer.Services
+namespace AssemblyPropertiesViewer.Services.Filtering
 {
     public class FilterDefinitionControlCreationVisitor : IFilteringControlCreationService
     {
-        public FrameworkElement FilteringControl
+        public FrameworkElement FilterControl
         {
             get
             {
@@ -40,8 +41,11 @@ namespace AssemblyPropertiesViewer.Services
             {
                 availableValuesCtrl.SelectedValue = filter.SelectedValue;
             }
-            
-            FilteringControl = availableValuesCtrl;
+            SetBindingToControl("SelectedValue", ComboBox.SelectedValueProperty, availableValuesCtrl);
+
+            //FilterControlDefinition = new FilterDefinition("-"); // this probably must be a class for the bindings to work properly
+            //FilterControlDefinition.FilterControl = availableValuesCtrl;
+            FilterControl = availableValuesCtrl;
         }
 
         public void Visit(StringFilter filter)
@@ -51,7 +55,10 @@ namespace AssemblyPropertiesViewer.Services
             // TODO: change into user control to keep view-specific information in the XAML
             TextBox textBox = new TextBox();
             textBox.ToolTip = filter.Description;
-            FilteringControl = GetControlsSetForFilter(textBox, filter);
+            textBox.DataContext = filter;
+            SetBindingToControl("MatchPattern", TextBox.TextProperty, textBox);
+
+            FilterControl = GetControlsSetForFilter(textBox, filter);
         }
 
         public void Visit(BooleanFilter filter)
@@ -61,7 +68,10 @@ namespace AssemblyPropertiesViewer.Services
             // TODO: change into user control to keep view-specific information in the XAML
             CheckBox checkBox = new CheckBox();
             checkBox.ToolTip = filter.Description;
-            FilteringControl = GetControlsSetForFilter(checkBox, filter);
+            checkBox.DataContext = filter;
+            SetBindingToControl("IsSelected", CheckBox.IsCheckedProperty, checkBox);
+
+            FilterControl = GetControlsSetForFilter(checkBox, filter);
         }
 
         /// <summary>
@@ -77,8 +87,16 @@ namespace AssemblyPropertiesViewer.Services
             filteringNotSupportedInfo.Content = "Filtering control is not available for this filter type.";
             filteringNotSupportedInfo.ToolTip = filter.Description;
 
-            FilteringControl = GetControlsSetForFilter(filteringNotSupportedInfo, filter);
+            FilterControl = GetControlsSetForFilter(filteringNotSupportedInfo, filter);
             MarkVisitorAccepted();
+        }
+
+        private void SetBindingToControl<T>(string bindingPath, DependencyProperty propertyToBind, T controlToBind) where T : FrameworkElement
+        {
+            var binding = new Binding();
+            binding.Path = new PropertyPath(bindingPath);
+            binding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            BindingOperations.SetBinding(controlToBind, propertyToBind, binding);
         }
 
         private void AssertIsValidFilterInstance(ISearchFilter filter)

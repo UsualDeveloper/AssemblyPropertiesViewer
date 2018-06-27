@@ -69,7 +69,7 @@ namespace AssemblyPropertiesViewer.Analyzers.Models
     [Serializable]
     public class BooleanFilter : SearchFilterBase, ISearchFilter
     {
-        public string MatchPattern { get; set; }
+        public bool IsSelected { get; set; }
 
         public BooleanFilter(string name, string description) : base(name, description)
         {

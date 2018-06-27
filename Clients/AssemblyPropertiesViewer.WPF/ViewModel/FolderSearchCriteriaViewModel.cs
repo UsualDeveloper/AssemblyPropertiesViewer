@@ -71,7 +71,7 @@ namespace AssemblyPropertiesViewer.ViewModel
                 {
                     crit.Accept(fieldDefinitionVisitor);
 
-                    var filterAssignedControl = fieldDefinitionVisitor.FilteringControl;
+                    var filterAssignedControl = fieldDefinitionVisitor.FilterControl;
                     if (filterAssignedControl == null)
                         throw new ArgumentException($"No control defined for one of the filters assigned to analyzer type: {searchCriteriaForAnalyzer.Key.FullName}.");
 

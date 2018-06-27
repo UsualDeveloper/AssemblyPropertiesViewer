@@ -1,4 +1,5 @@
 using AssemblyPropertiesViewer.Services;
+using AssemblyPropertiesViewer.Services.Filtering;
 using AssemblyPropertiesViewer.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;

@@ -83,7 +83,7 @@
       <DependentUpon>PropertiesWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Services\ApplicationControlService.cs" />
-    <Compile Include="Services\FilterDefinitionControlCreationVisitor.cs" />
+    <Compile Include="Filtering\FilterDefinitionControlCreationVisitor.cs" />
     <Compile Include="Services\Interfaces\IApplicationControlService.cs" />
     <Compile Include="Services\Interfaces\IAssemblyAnalysisService.cs" />
     <Compile Include="Services\Interfaces\IFilteringControlCreationService.cs" />

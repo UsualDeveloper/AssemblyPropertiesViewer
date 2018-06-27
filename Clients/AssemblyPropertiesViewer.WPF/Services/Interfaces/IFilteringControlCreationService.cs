@@ -10,6 +10,6 @@ namespace AssemblyPropertiesViewer.Services.Interfaces
 {
     public interface IFilteringControlCreationService : ISearchFilterDefinitionVisitor
     {
-        FrameworkElement FilteringControl { get; }
+        FrameworkElement FilterControl { get; }
     }
 }
