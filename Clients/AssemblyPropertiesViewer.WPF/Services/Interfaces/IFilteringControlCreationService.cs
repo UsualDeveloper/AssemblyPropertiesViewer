@@ -1,4 +1,6 @@
 ﻿using AssemblyPropertiesViewer.Analyzers.Models;
+using AssemblyPropertiesViewer.Analyzers.Models.Filtering;
+using AssemblyPropertiesViewer.Services.Filtering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,8 +10,8 @@ using System.Windows;
 
 namespace AssemblyPropertiesViewer.Services.Interfaces
 {
-    public interface IFilteringControlCreationService : ISearchFilterDefinitionVisitor
+    public interface IFilteringControlCreationService : ISearchFilterVisitor
     {
-        FrameworkElement FilterControl { get; }
+        FilterDefinitionControl FilterControl { get; }
     }
 }

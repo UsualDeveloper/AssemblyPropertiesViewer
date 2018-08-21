@@ -12,6 +12,8 @@
   See http://www.galasoft.ch/mvvm
 */
 
+using AssemblyPropertiesViewer.Analyzers.Filtering;
+using AssemblyPropertiesViewer.Analyzers.Filtering.Interfaces;
 using AssemblyPropertiesViewer.Core.Interfaces;
 using AssemblyPropertiesViewer.Core.Logger;
 using AssemblyPropertiesViewer.Services;
@@ -50,7 +52,10 @@ namespace AssemblyPropertiesViewer
             SimpleIoc.Default.Register<ILogger, BasicLogger>();
             SimpleIoc.Default.Register<IWindowService, WindowService>();
             SimpleIoc.Default.Register<IApplicationControlService, ApplicationControlService>();
+            SimpleIoc.Default.Register<IFileSystemService, FileSystemService>();
+
             SimpleIoc.Default.Register<IFilteringControlCreationService, FilterDefinitionControlCreationVisitor>();
+            SimpleIoc.Default.Register<IFilterMatchVisitor, FilterMatchVisitor>();
         }
 
         private void RegisterViewModels()

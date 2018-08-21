@@ -1,4 +1,5 @@
 ﻿using AssemblyPropertiesViewer.Analyzers.Models;
+using AssemblyPropertiesViewer.Analyzers.Models.Filtering;
 using AssemblyPropertiesViewer.Services.Interfaces;
 using System;
 using System.Windows;
@@ -9,7 +10,7 @@ namespace AssemblyPropertiesViewer.Services.Filtering
 {
     public class FilterDefinitionControlCreationVisitor : IFilteringControlCreationService
     {
-        public FrameworkElement FilterControl
+        public FilterDefinitionControl FilterControl
         {
             get
             {
@@ -26,7 +27,7 @@ namespace AssemblyPropertiesViewer.Services.Filtering
         }
 
         private bool wasControlCreationInvoked = false;
-        private FrameworkElement filteringControl;
+        private FilterDefinitionControl filteringControl;
 
         public void Visit(DropDownFilter filter)
         {
@@ -36,16 +37,16 @@ namespace AssemblyPropertiesViewer.Services.Filtering
             ComboBox availableValuesCtrl = new ComboBox();
 
             availableValuesCtrl.ItemsSource = filter.AvailableValues;
+            availableValuesCtrl.SelectedValuePath = "Key";
+            availableValuesCtrl.DisplayMemberPath = "Value";
 
             if (filter.SelectedValue != null)
             {
                 availableValuesCtrl.SelectedValue = filter.SelectedValue;
             }
-            SetBindingToControl("SelectedValue", ComboBox.SelectedValueProperty, availableValuesCtrl);
-
-            //FilterControlDefinition = new FilterDefinition("-"); // this probably must be a class for the bindings to work properly
-            //FilterControlDefinition.FilterControl = availableValuesCtrl;
-            FilterControl = availableValuesCtrl;
+            SetBindingToControl(nameof(DropDownFilter.SelectedValue), ComboBox.SelectedValueProperty, availableValuesCtrl);
+            
+            FilterControl = GetControlsSetForFilter(availableValuesCtrl, filter);
         }
 
         public void Visit(StringFilter filter)
@@ -56,7 +57,7 @@ namespace AssemblyPropertiesViewer.Services.Filtering
             TextBox textBox = new TextBox();
             textBox.ToolTip = filter.Description;
             textBox.DataContext = filter;
-            SetBindingToControl("MatchPattern", TextBox.TextProperty, textBox);
+            SetBindingToControl(nameof(StringFilter.MatchPattern), TextBox.TextProperty, textBox);
 
             FilterControl = GetControlsSetForFilter(textBox, filter);
         }
@@ -69,7 +70,7 @@ namespace AssemblyPropertiesViewer.Services.Filtering
             CheckBox checkBox = new CheckBox();
             checkBox.ToolTip = filter.Description;
             checkBox.DataContext = filter;
-            SetBindingToControl("IsSelected", CheckBox.IsCheckedProperty, checkBox);
+            SetBindingToControl(nameof(BooleanFilter.IsSelected), CheckBox.IsCheckedProperty, checkBox);
 
             FilterControl = GetControlsSetForFilter(checkBox, filter);
         }
@@ -91,10 +92,11 @@ namespace AssemblyPropertiesViewer.Services.Filtering
             MarkVisitorAccepted();
         }
 
-        private void SetBindingToControl<T>(string bindingPath, DependencyProperty propertyToBind, T controlToBind) where T : FrameworkElement
+        private void SetBindingToControl<T>(string bindingPath, DependencyProperty propertyToBind, T controlToBind, BindingMode bindingMode = BindingMode.Default) where T : FrameworkElement
         {
             var binding = new Binding();
             binding.Path = new PropertyPath(bindingPath);
+            binding.Mode = bindingMode;
             binding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
             BindingOperations.SetBinding(controlToBind, propertyToBind, binding);
         }
@@ -125,20 +127,48 @@ namespace AssemblyPropertiesViewer.Services.Filtering
         /// <param name="inputCtrl">Main input element that allows to specify criteria.</param>
         /// <param name="filter">Associated filter definition instance.</param>
         /// <returns></returns>
-        private FrameworkElement GetControlsSetForFilter(FrameworkElement inputCtrl, ISearchFilter filter)
+        private FilterDefinitionControl GetControlsSetForFilter(FrameworkElement inputCtrl, ISearchFilter filter)
         {
-            var panel = new Grid();
-            panel.ColumnDefinitions.Add(new ColumnDefinition());
-            panel.ColumnDefinitions.Add(new ColumnDefinition());
-
+            var filterControl = new FilterDefinitionControl();
+            
+            filterControl.ColumnDefinitions.Add(new ColumnDefinition());
+            filterControl.ColumnDefinitions.Add(new ColumnDefinition());
+            
             var label = new TextBlock() { Text = filter.Name };
-            panel.Children.Add(label);
+            filterControl.Children.Add(label);
             Grid.SetColumn(label, 0);
 
-            panel.Children.Add(inputCtrl);
+            filterControl.Children.Add(inputCtrl);
             Grid.SetColumn(inputCtrl, 1);
 
-            return panel;
+            filterControl.DataContext = filter;
+            //TODO: verify binding mode
+            SetBindingToControl(nameof(ISearchFilter.IsFilterEnabled), FilterDefinitionControl.IsFilterEnabledProperty, filterControl, BindingMode.TwoWay);
+
+            SetBindingToControl(nameof(ISearchFilter.IsFilterEnabled), FilterDefinitionControl.IsEnabledProperty, filterControl, BindingMode.OneWay);
+            
+            return filterControl;
+        }
+    }
+
+    // TODO: move this class to appropriate place
+    public class FilterDefinitionControl : Grid
+    {
+        public static readonly DependencyProperty IsFilterEnabledProperty = DependencyProperty.Register(
+            nameof(IsFilterEnabled), 
+            typeof(bool), typeof(FilterDefinitionControl), 
+            new FrameworkPropertyMetadata(false, new PropertyChangedCallback(IsFilterEnabledPropertyChanged)));
+        
+        public bool IsFilterEnabled
+        {
+            get { return (bool)GetValue(IsFilterEnabledProperty); }
+            set { SetValue(IsFilterEnabledProperty, value); }
+        }
+        
+
+        private static void IsFilterEnabledPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            // no additional handling required yet
         }
     }
 }

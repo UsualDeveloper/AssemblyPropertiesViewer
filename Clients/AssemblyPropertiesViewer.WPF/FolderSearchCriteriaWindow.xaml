@@ -42,12 +42,11 @@
                                 <!--TODO: add default spacing between subsequent filtering control sets-->
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="auto"/>
-                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition />
                                     </Grid.ColumnDefinitions>
-                                    <CheckBox x:Name="isFilterEnabledCheckBox" Grid.Column="0" IsChecked="{Binding IsFilterEnabled}"></CheckBox>
-                                    <ContentControl IsEnabled="{Binding Path=IsFilterEnabled, Mode=OneWay}" Grid.Column="1" Content="{Binding FilterControl}" HorizontalAlignment="Stretch">
-                                    </ContentControl>
+                                    <CheckBox Visibility="Visible" x:Name="isFilterEnabledCheckBox" Grid.Column="0" IsChecked="{Binding ItemControl.IsFilterEnabled}"></CheckBox>
+                                    <ContentControl Grid.Column="1" Content="{Binding ItemControl}" />
                                 </Grid>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -55,8 +54,10 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Button Content="Search" Command="{Binding StartFolderSearchCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
+        <StackPanel Grid.Row="1" Orientation="Horizontal" FlowDirection="RightToLeft" Margin="4">
+            <Button Command="{Binding StartFolderSearchCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}">
+                <TextBlock Margin="3, 0">Search</TextBlock>
+            </Button>
         </StackPanel>
     </Grid>
 </Window>

@@ -84,8 +84,10 @@
     </Compile>
     <Compile Include="Services\ApplicationControlService.cs" />
     <Compile Include="Filtering\FilterDefinitionControlCreationVisitor.cs" />
+    <Compile Include="Services\FileSystemService.cs" />
     <Compile Include="Services\Interfaces\IApplicationControlService.cs" />
     <Compile Include="Services\Interfaces\IAssemblyAnalysisService.cs" />
+    <Compile Include="Services\Interfaces\IFileSystemService.cs" />
     <Compile Include="Services\Interfaces\IFilteringControlCreationService.cs" />
     <Compile Include="Services\Interfaces\IWindowService.cs" />
     <Compile Include="Services\RestrictedAppDomainAnalysisService.cs" />
@@ -152,6 +154,10 @@
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Analyzers\Core\AssemblyPropertiesViewer.Analyzers.Filtering\AssemblyPropertiesViewer.Analyzers.Filtering.csproj">
+      <Project>{9bfe0b31-8bd3-414a-961e-5718e6750266}</Project>
+      <Name>AssemblyPropertiesViewer.Analyzers.Filtering</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Analyzers\Core\AssemblyPropertiesViewer.Analyzers.Loader\AssemblyPropertiesViewer.Analyzers.Loader.csproj">
       <Project>{235BEEA1-89A4-4BFE-BAD5-B8FFAF12443C}</Project>
       <Name>AssemblyPropertiesViewer.Analyzers.Loader</Name>

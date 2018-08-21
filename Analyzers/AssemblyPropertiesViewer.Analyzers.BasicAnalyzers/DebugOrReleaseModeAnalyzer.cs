@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Reflection;
 using static System.Diagnostics.DebuggableAttribute;
 using System.Collections.Generic;
+using AssemblyPropertiesViewer.Analyzers.Models.Filtering;
 
 namespace AssemblyPropertiesViewer.Analyzers.BasicAnalyzers
 {

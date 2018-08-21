@@ -1,5 +1,6 @@
 ﻿using AssemblyPropertiesViewer.Analyzers.Loader;
 using AssemblyPropertiesViewer.Analyzers.Models;
+using AssemblyPropertiesViewer.Analyzers.Models.Filtering;
 using AssemblyPropertiesViewer.Core.Interfaces;
 using AssemblyPropertiesViewer.Services.Interfaces;
 using System;
@@ -7,14 +8,20 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security;
 using System.Security.Permissions;
+using System.Linq;
+using AssemblyPropertiesViewer.Analyzers.Filtering.Interfaces;
 
 namespace AssemblyPropertiesViewer.Services
 {
     internal class RestrictedAppDomainAnalysisService : IAssemblyAnalysisService
     {
+        private object instanceAnalysisLock = new object();
+
         private readonly Type ProxyType = typeof(AssemblyProxy);
 
-        private ILogger logger;
+        private readonly ILogger logger;
+        private readonly IFileSystemService fileSystemService;
+        private readonly IFilterMatchVisitor filterMatchVisitor;
 
         public bool IsAnalysisInProgress
         {
@@ -33,22 +40,109 @@ namespace AssemblyPropertiesViewer.Services
                 }
             }
         }
-        
         private bool isAnalysisInProgress = false;
 
-        private object instanceAnalysisLock = new object();
+        
 
-        public RestrictedAppDomainAnalysisService(ILogger logger)
+        public RestrictedAppDomainAnalysisService(ILogger logger, IFileSystemService fileSystemService, IFilterMatchVisitor filterMatchVisitor)
         {
             this.logger = logger;
+            this.fileSystemService = fileSystemService;
+            this.filterMatchVisitor = filterMatchVisitor;
 
             this.logger.InitializeLogger(typeof(RestrictedAppDomainAnalysisService));
         }
 
-        public IEnumerable<AnalysisResult> InspectAssembly(string assemblyFilePath)
+        public IEnumerable<AnalysisResult> InspectAssembly(string assemblyFilePath/*, IReadOnlyDictionary<string, IEnumerable<ISearchFilter>> searchCriteria = null*/)
+        {
+            //TODO: detect which analyzers to use based on active filters
+            return RunInRestrictedDomain<IEnumerable<AnalysisResult>>(
+                assemblyFilePath, 
+                (proxy, filePath) => proxy.InspectAssembly(filePath));
+        }
+        
+        public IReadOnlyDictionary<string, IEnumerable<AnalysisResult>>  InspectFolderAndFilterResults(string searchFolderPath, bool searchRecursively, IReadOnlyDictionary<string, IEnumerable<ISearchFilter>> searchCriteria)
+        {
+            var folderAnalysisResults = new Dictionary<string, IEnumerable<AnalysisResult>>();
+
+            var filesToAnalyze = fileSystemService.GetAssembliesInDirectory(searchFolderPath, searchRecursively);
+            foreach (var filePath in filesToAnalyze)
+            {
+                // TODO: analysis should be performed only for analyzers associated with active filters
+                var analyzerResults = InspectAssembly(filePath);
+                
+                bool? isFileMatch = null;
+                foreach (var fileAnalysisResult in analyzerResults)
+                {
+                    IEnumerable<ISearchFilter> filtersForAnalyzer;
+                    if (!searchCriteria.TryGetValue(fileAnalysisResult.AnalyzerTypeFullName, out filtersForAnalyzer))
+                    {
+                        continue;
+                    }
+
+                    foreach (var filter in filtersForAnalyzer)
+                    {
+                        if (!filter.IsFilterEnabled)
+                        {
+                            continue;
+                        }
+
+                        filterMatchVisitor.InitializeVisitorForAccept(fileAnalysisResult);
+                        filter.Accept(filterMatchVisitor);
+                        
+                        if (!isFileMatch.HasValue && filterMatchVisitor.IsAcceptedFilterMatching)
+                        {
+                            isFileMatch = true;
+                        }
+                        else if (!filterMatchVisitor.IsAcceptedFilterMatching)
+                        {
+                            isFileMatch = false;
+                            break;
+                        }
+                    }
+                    
+                    // all filters applied has to match for an assembly to be considered as matched
+                    if (isFileMatch.HasValue && !isFileMatch.Value)
+                    {
+                        break;
+                    }
+                }
+
+                // if no filtering was applied or assembly matched all the filters, consider is as matched
+                if (!isFileMatch.HasValue || isFileMatch.Value)
+                {
+                    folderAnalysisResults.Add(filePath, analyzerResults);
+                }
+            }
+
+            return folderAnalysisResults;
+        }
+
+        public IReadOnlyDictionary<string, IEnumerable<ISearchFilter>> GetAvailableSearchFilters()
+        {
+            logger.Info("Creating analysis sandbox...");
+
+            var testDomain = CreateDomainWithRestrictedPermissions();
+            var proxy = GetAssemblyAnalyzingProxyForSeparateAppDomain(testDomain);
+
+            logger.Info("Retrieving available search filters...");
+            var filters = proxy.GetAvailableSearchFilters();
+
+            logger.Info("Closing the sandbox...");
+            AppDomain.Unload(testDomain);
+
+            return filters;
+        }
+
+        private TResult RunInRestrictedDomain<TResult>(string assemblyFilePath, Func<AssemblyProxy, string, TResult> methodToInvoke)
         {
             try
             {
+                if (methodToInvoke == null)
+                {
+                    throw new ArgumentNullException(nameof(methodToInvoke));
+                }
+
                 if (IsAnalysisInProgress)
                 {
                     throw new InvalidOperationException("Analysis of an assembly is already in progress.");
@@ -62,12 +156,12 @@ namespace AssemblyPropertiesViewer.Services
                 var testDomain = CreateDomainWithRestrictedPermissions(assemblyFilePath);
                 var proxy = GetAssemblyAnalyzingProxyForSeparateAppDomain(testDomain);
 
-                logger.Info("Inspecting assemblies with available analyzers...");
-                var analysisResults = proxy.InspectAssembly(assemblyFilePath);
+                logger.Info("Invoking custom method with prepared proxy...");
+                var analysisResults = methodToInvoke(proxy, assemblyFilePath);
 
                 logger.Info("Closing the sandbox...");
                 AppDomain.Unload(testDomain);
-                
+
                 logger.Info("Assembly analysis completed successfully.");
                 return analysisResults;
             }
@@ -91,28 +185,6 @@ namespace AssemblyPropertiesViewer.Services
         {
             var fileInfo = new FileInfo(filePath);
             return fileInfo.Length;
-        }
-
-        public void InspectFolderAndFilterResults(string searchFolderPath, bool searchRecursively, IReadOnlyDictionary<Type, IEnumerable<ISearchFilter>> searchCriteria)
-        {
-            // TODO: implement
-            return;
-        }
-
-        public IReadOnlyDictionary<Type, IEnumerable<ISearchFilter>> GetAvailableSearchFilters()
-        {
-            logger.Info("Creating analysis sandbox...");
-
-            var testDomain = CreateDomainWithRestrictedPermissions();
-            var proxy = GetAssemblyAnalyzingProxyForSeparateAppDomain(testDomain);
-
-            logger.Info("Retrieving available search filters...");
-            var filters = proxy.GetAvailableSearchFilters();
-
-            logger.Info("Closing the sandbox...");
-            AppDomain.Unload(testDomain);
-
-            return filters;
         }
 
         private PermissionSet GetRestrictedPermissionSet(string additionalReadAccessAssemblyFilePath = null)

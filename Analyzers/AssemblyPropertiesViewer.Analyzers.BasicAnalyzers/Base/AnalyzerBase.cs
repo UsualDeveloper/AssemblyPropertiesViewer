@@ -1,4 +1,5 @@
 ﻿using AssemblyPropertiesViewer.Analyzers.Models;
+using AssemblyPropertiesViewer.Analyzers.Models.Filtering;
 using System;
 using System.Collections.Generic;
 using System.Linq;

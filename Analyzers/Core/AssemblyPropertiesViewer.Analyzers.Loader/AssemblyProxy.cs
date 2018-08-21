@@ -1,5 +1,6 @@
 ﻿using AssemblyPropertiesViewer.Analyzers.Interfaces;
 using AssemblyPropertiesViewer.Analyzers.Models;
+using AssemblyPropertiesViewer.Analyzers.Models.Filtering;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -36,20 +37,27 @@ namespace AssemblyPropertiesViewer.Analyzers.Loader
             var assemblyAnalyzers = GetAnalyzers();
             foreach (var analyzer in assemblyAnalyzers)
             {
-                analysisResults.Add(InspectAssemblyWithAnalyzer(analyzer));
+                var resultsForAnalyzer = InspectAssemblyWithAnalyzer(analyzer);
+                resultsForAnalyzer.AnalyzerTypeFullName = analyzer.GetType().FullName;
+
+                analysisResults.Add(resultsForAnalyzer);
             }
 
             return analysisResults;
         }
 
-        public IReadOnlyDictionary<Type, IEnumerable<ISearchFilter>> GetAvailableSearchFilters()
+        public IReadOnlyDictionary<string, IEnumerable<ISearchFilter>> GetAvailableSearchFilters()
         {
-            var filters = new Dictionary<Type, IEnumerable<ISearchFilter>>();
+            var filters = new Dictionary<string, IEnumerable<ISearchFilter>>();
             
             var assemblyAnalyzers = GetAnalyzers();
             foreach (var analyzer in assemblyAnalyzers)
             {
-                filters.Add(analyzer.GetType(), analyzer.GetSearchFilters());
+                var filtersForAnalyzer = analyzer.GetSearchFilters();
+                if (filtersForAnalyzer != null)
+                {
+                    filters.Add(analyzer.GetType().FullName, filtersForAnalyzer);
+                }
             }
 
             return filters;

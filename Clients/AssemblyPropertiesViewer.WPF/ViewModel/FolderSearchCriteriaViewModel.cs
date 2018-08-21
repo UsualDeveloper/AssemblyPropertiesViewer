@@ -1,4 +1,6 @@
 ﻿using AssemblyPropertiesViewer.Analyzers.Models;
+using AssemblyPropertiesViewer.Analyzers.Models.Filtering;
+using AssemblyPropertiesViewer.Services.Filtering;
 using AssemblyPropertiesViewer.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -15,7 +17,7 @@ namespace AssemblyPropertiesViewer.ViewModel
 {
     public class FolderSearchCriteriaViewModel : ViewModelBase
     {
-        public IReadOnlyDictionary<Type, IEnumerable<ISearchFilter>> SearchCriteria
+        public IReadOnlyDictionary<string, IEnumerable<ISearchFilter>> SearchCriteria
         {
             get { return searchCriteria; }
             set
@@ -25,7 +27,7 @@ namespace AssemblyPropertiesViewer.ViewModel
                 UpdateFilterControls();
             }
         }
-        IReadOnlyDictionary<Type, IEnumerable<ISearchFilter>> searchCriteria;
+        IReadOnlyDictionary<string, IEnumerable<ISearchFilter>> searchCriteria;
         public bool SearchRecursively { get; set; } = true;
 
         public ICommand StartFolderSearchCommand { get; private set; }
@@ -33,12 +35,12 @@ namespace AssemblyPropertiesViewer.ViewModel
         private readonly IFilteringControlCreationService fieldDefinitionVisitor;
         private readonly IWindowService windowService;
 
-        public Dictionary<Type, List<FilterDefinitionItemControl>> FilteringControls
+        public Dictionary<string, List<ItemsControlItem<FilterDefinitionControl>>> FilteringControls
         {
             get { return filteringControls; }
         }
 
-        private Dictionary<Type, List<FilterDefinitionItemControl>> filteringControls = new Dictionary<Type, List<FilterDefinitionItemControl>>();
+        private Dictionary<string, List<ItemsControlItem<FilterDefinitionControl>>> filteringControls = new Dictionary<string, List<ItemsControlItem<FilterDefinitionControl>>>();
 
         public FolderSearchCriteriaViewModel(IFilteringControlCreationService fieldDefinitionVisitor, IWindowService windowService)
         {
@@ -47,13 +49,13 @@ namespace AssemblyPropertiesViewer.ViewModel
 
             this.StartFolderSearchCommand = new RelayCommand<Window>(StartFolderSearchProcess);
         }
-
+        
         private void StartFolderSearchProcess(Window window)
         {
             windowService.CloseWindowWithResult(window, true);
         }
 
-        void UpdateFilterControls()
+        private void UpdateFilterControls()
         {
             filteringControls.Clear();
 
@@ -65,7 +67,7 @@ namespace AssemblyPropertiesViewer.ViewModel
                 if (searchCriteriaForAnalyzer.Value == null)
                     continue;
 
-                var searchCtrls = new List<FilterDefinitionItemControl>();
+                var searchCtrls = new List<ItemsControlItem<FilterDefinitionControl>>();
 
                 foreach (var crit in searchCriteriaForAnalyzer.Value)
                 {
@@ -73,9 +75,9 @@ namespace AssemblyPropertiesViewer.ViewModel
 
                     var filterAssignedControl = fieldDefinitionVisitor.FilterControl;
                     if (filterAssignedControl == null)
-                        throw new ArgumentException($"No control defined for one of the filters assigned to analyzer type: {searchCriteriaForAnalyzer.Key.FullName}.");
+                        throw new ArgumentException($"No control defined for one of the filters assigned to analyzer type: {searchCriteriaForAnalyzer.Key}.");
 
-                    searchCtrls.Add(new FilterDefinitionItemControl() { FilterControl = filterAssignedControl } );
+                    searchCtrls.Add(new ItemsControlItem<FilterDefinitionControl> { ItemControl = filterAssignedControl });
                 }
 
                 filteringControls.Add(searchCriteriaForAnalyzer.Key, searchCtrls);
@@ -83,10 +85,13 @@ namespace AssemblyPropertiesViewer.ViewModel
         }
     }
 
-    public class FilterDefinitionItemControl
+    /// <summary>
+    /// Additional class allowing to bind to ItemsControl with custom template defined 
+    /// instead of triggering automatic item rendering.
+    /// </summary>
+    /// <typeparam name="T">Type of the control to be used.</typeparam>
+    public class ItemsControlItem<T> where T: FrameworkElement
     {
-        public bool IsFilterEnabled { get; set; } = true;
-
-        public FrameworkElement FilterControl { get; set; }
+        public T ItemControl { get; set; }
     }
 }

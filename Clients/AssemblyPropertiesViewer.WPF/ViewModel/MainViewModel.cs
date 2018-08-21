@@ -99,12 +99,14 @@ namespace AssemblyPropertiesViewer.ViewModel
             //TODO: replace with a proper view model transition
             var searchViewModel = new FolderSearchCriteriaViewModel(new FilterDefinitionControlCreationVisitor(), this.windowService);
             searchViewModel.SearchCriteria = analysisService.GetAvailableSearchFilters();
-            
-            // if defining search filtering values was cancelled
+
+            // open search filtering values definition dialog window and check if it was dismissed
             if (!windowService.OpenChildDialogWithResult<FolderSearchCriteriaWindow>(sourceVisualElement, searchViewModel))
                 return;
 
-            analysisService.InspectFolderAndFilterResults(searchFolderPath, searchViewModel.SearchRecursively, searchViewModel.SearchCriteria);
+            var filteringResults = analysisService.InspectFolderAndFilterResults(searchFolderPath, searchViewModel.SearchRecursively, searchViewModel.SearchCriteria);
+
+            //TODO: open folder filtering results viewmodel
         }
 
         private string GetFilePathForDroppedFileData(IDataObject droppedFileData)
