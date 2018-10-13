@@ -62,6 +62,9 @@ namespace AssemblyPropertiesViewer
         {
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<FolderSearchCriteriaViewModel>();
+
+            SimpleIoc.Default.Register<MultipleFilesAnalysisResultsViewModel>();
+            SimpleIoc.Default.Register<PropertiesViewModel>();
         }
         
         // TODO: make this part of code more open to extending with other view models
@@ -78,6 +81,22 @@ namespace AssemblyPropertiesViewer
             get
             {
                 return SimpleIoc.Default.GetInstance<FolderSearchCriteriaViewModel>();
+            }
+        }
+
+        public MultipleFilesAnalysisResultsViewModel MultipleFilesAnalysisResultsViewModel
+        {
+            get
+            {
+                return SimpleIoc.Default.GetInstance<MultipleFilesAnalysisResultsViewModel>();
+            }
+        }
+
+        public PropertiesViewModel PropertiesViewModel
+        {
+            get
+            {
+                return SimpleIoc.Default.GetInstance<PropertiesViewModel>();
             }
         }
 

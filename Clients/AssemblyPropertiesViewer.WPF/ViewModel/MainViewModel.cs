@@ -106,7 +106,15 @@ namespace AssemblyPropertiesViewer.ViewModel
 
             var filteringResults = analysisService.InspectFolderAndFilterResults(searchFolderPath, searchViewModel.SearchRecursively, searchViewModel.SearchCriteria);
 
-            //TODO: open folder filtering results viewmodel
+            // TODO
+            var filteringResultsViewModel = new MultipleFilesAnalysisResultsViewModel()
+            {
+                AnalyzedFolderPath = searchFolderPath,
+                IsAnalysisRecursive = searchViewModel.SearchRecursively,
+                FilesAnalysisResults = filteringResults
+            };
+
+            windowService.OpenChildWindow<MultipleFilesAnalysisResultsWindow>(sourceVisualElement, filteringResultsViewModel);
         }
 
         private string GetFilePathForDroppedFileData(IDataObject droppedFileData)

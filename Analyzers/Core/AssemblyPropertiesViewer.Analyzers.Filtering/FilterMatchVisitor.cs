@@ -84,7 +84,7 @@ namespace AssemblyPropertiesViewer.Analyzers.Filtering
                 }
                 else
                 {
-                    Regex regex = new Regex(filter.MatchPattern);
+                    Regex regex = new Regex(filter.MatchPattern ?? ".*");
                     isAcceptedFilterMatching = (regex.IsMatch(fileAnalysisResult.Value));
                 }
             }
