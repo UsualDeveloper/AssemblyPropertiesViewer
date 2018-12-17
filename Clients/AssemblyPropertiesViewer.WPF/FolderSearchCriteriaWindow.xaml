@@ -28,10 +28,10 @@
                     <ItemsControl ItemsSource="{Binding}">
                         <ItemsControl.Template>
                             <ControlTemplate>
-                                <Border BorderThickness="1" BorderBrush="Black">
+                                <Border BorderThickness="1" BorderBrush="Black" Margin="4" Padding="4">
                                     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <!--TODO: change to display name of the group for the specific analyzer-->
-                                        <TextBlock Text="Filtering group"></TextBlock>
+                                        <TextBlock Text="Filtering group" Margin="0 0 0 4"></TextBlock>
                                         <ItemsPresenter />
                                     </StackPanel>
                                 </Border>
@@ -43,9 +43,10 @@
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="auto" />
-                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
-                                    <CheckBox Visibility="Visible" x:Name="isFilterEnabledCheckBox" Grid.Column="0" IsChecked="{Binding ItemControl.IsFilterEnabled}"></CheckBox>
+                                    <CheckBox Visibility="Visible" x:Name="isFilterEnabledCheckBox" Grid.Column="0" IsChecked="{Binding ItemControl.IsFilterEnabled}"
+                                              Margin="0 0 10 0" ToolTip="Enables/disables the filter"></CheckBox>
                                     <ContentControl Grid.Column="1" Content="{Binding ItemControl}" />
                                 </Grid>
                             </DataTemplate>
