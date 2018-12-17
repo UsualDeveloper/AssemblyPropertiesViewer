@@ -29,7 +29,7 @@
     <Grid>
         <Grid Margin="0">
             <TextBlock Padding="20" x:Name="textBlock" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextWrapping="Wrap" TextAlignment="Center" 
-                   Text="Drop assembly here to display information about it" Margin="0" AllowDrop="True" Background="#FFD0D0D0">
+                   Text="Drop assembly here to display information about it or right-click to show other options" Margin="0" AllowDrop="True" Background="#FFD0D0D0">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Drop">
                         <cmd:EventToCommand Command="{Binding DropAssemblyCommand}" PassEventArgsToCommand="True"></cmd:EventToCommand>
