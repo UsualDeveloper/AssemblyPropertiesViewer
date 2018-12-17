@@ -26,7 +26,7 @@ namespace AssemblyPropertiesViewer.Analyzers.Models.Filtering
         /// <summary>
         /// Flag indicating if specific filter criteria model is enabled (or marked as active) and should be used in the filtering process.
         /// </summary>
-        public bool IsFilterEnabled { get; set; } = true;
+        public bool IsFilterEnabled { get; set; }
 
         public SearchFilterBase(string name, string description)
         {
