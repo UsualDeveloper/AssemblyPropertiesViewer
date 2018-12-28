@@ -50,6 +50,8 @@ namespace AssemblyPropertiesViewer.ViewModel
                 var fileAnalysisModelDict = (fileAnalysisModel as IDictionary<string, object>);
                 foreach (var analyzersInfo in oneFileAnalysis.Value)
                 {
+                    AssertUniqueColumnNameForAnalysisResult(analyzersInfo.AssemblyPropertyName, fileAnalysisModelDict);
+
                     fileAnalysisModelDict[analyzersInfo.AssemblyPropertyName] = analyzersInfo.Value;
                 }
 
@@ -57,6 +59,14 @@ namespace AssemblyPropertiesViewer.ViewModel
             }
 
             return dataGridModel;
+        }
+
+        private void AssertUniqueColumnNameForAnalysisResult(string assemblyPropertyName, IDictionary<string, object> fileAnalysisModelDict)
+        {
+            if (fileAnalysisModelDict.ContainsKey(assemblyPropertyName))
+            {
+                throw new InvalidOperationException("Colliding column names: two or more analyzers use the same name for some of their results.");
+            }
         }
     }
 }
