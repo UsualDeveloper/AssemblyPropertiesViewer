@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,7 +43,9 @@ namespace AssemblyPropertiesViewer.ViewModel
             {
                 dynamic fileAnalysisModel = new ExpandoObject();
 
-                fileAnalysisModel.FileName = oneFileAnalysis.Key;
+                fileAnalysisModel.FileName = Path.GetFileName(oneFileAnalysis.Key);
+
+                fileAnalysisModel.Directory = Path.GetDirectoryName(oneFileAnalysis.Key);
 
                 var fileAnalysisModelDict = (fileAnalysisModel as IDictionary<string, object>);
                 foreach (var analyzersInfo in oneFileAnalysis.Value)
