@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F32ABA17-DEFE-4268-ACAC-9BB758D1D5BF}</ProjectGuid>
+    <ProjectGuid>{9BFE0B31-8BD3-414A-961E-5718E6750266}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AssemblyPropertiesViewer.Analyzers.Models</RootNamespace>
-    <AssemblyName>AssemblyPropertiesViewer.Analyzers.Models</AssemblyName>
+    <RootNamespace>AssemblyPropertiesViewer.Analyzers.Filtering</RootNamespace>
+    <AssemblyName>AssemblyPropertiesViewer.Analyzers.Filtering</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -40,10 +40,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AnalysisResult.cs" />
-    <Compile Include="Filtering\ISearchFilter.cs" />
+    <Compile Include="FilterMatchVisitor.cs" />
+    <Compile Include="Interfaces\IFilterMatchVisitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AssemblyPropertiesViewer.Analyzers.Interfaces\AssemblyPropertiesViewer.Analyzers.Interfaces.csproj">
+      <Project>{2d8b44ad-c6df-49bc-aded-11e72642929d}</Project>
+      <Name>AssemblyPropertiesViewer.Analyzers.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AssemblyPropertiesViewer.Analyzers.Models\AssemblyPropertiesViewer.Analyzers.Models.csproj">
+      <Project>{f32aba17-defe-4268-acac-9bb758d1d5bf}</Project>
+      <Name>AssemblyPropertiesViewer.Analyzers.Models</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -12,9 +12,12 @@
   See http://www.galasoft.ch/mvvm
 */
 
+using AssemblyPropertiesViewer.Analyzers.Filtering;
+using AssemblyPropertiesViewer.Analyzers.Filtering.Interfaces;
 using AssemblyPropertiesViewer.Core.Interfaces;
 using AssemblyPropertiesViewer.Core.Logger;
 using AssemblyPropertiesViewer.Services;
+using AssemblyPropertiesViewer.Services.Filtering;
 using AssemblyPropertiesViewer.Services.Interfaces;
 using AssemblyPropertiesViewer.ViewModel;
 using GalaSoft.MvvmLight;
@@ -48,11 +51,20 @@ namespace AssemblyPropertiesViewer
             SimpleIoc.Default.Register<IAssemblyAnalysisService, RestrictedAppDomainAnalysisService>();
             SimpleIoc.Default.Register<ILogger, BasicLogger>();
             SimpleIoc.Default.Register<IWindowService, WindowService>();
+            SimpleIoc.Default.Register<IApplicationControlService, ApplicationControlService>();
+            SimpleIoc.Default.Register<IFileSystemService, FileSystemService>();
+
+            SimpleIoc.Default.Register<IFilteringControlCreationService, FilterDefinitionControlCreationVisitor>();
+            SimpleIoc.Default.Register<IFilterMatchVisitor, FilterMatchVisitor>();
         }
 
         private void RegisterViewModels()
         {
             SimpleIoc.Default.Register<MainViewModel>();
+            SimpleIoc.Default.Register<FolderSearchCriteriaViewModel>();
+
+            SimpleIoc.Default.Register<MultipleFilesAnalysisResultsViewModel>();
+            SimpleIoc.Default.Register<PropertiesViewModel>();
         }
         
         // TODO: make this part of code more open to extending with other view models
@@ -63,7 +75,31 @@ namespace AssemblyPropertiesViewer
                 return SimpleIoc.Default.GetInstance<MainViewModel>();
             }
         }
-        
+
+        public FolderSearchCriteriaViewModel FolderSearchCriteriaViewModel
+        {
+            get
+            {
+                return SimpleIoc.Default.GetInstance<FolderSearchCriteriaViewModel>();
+            }
+        }
+
+        public MultipleFilesAnalysisResultsViewModel MultipleFilesAnalysisResultsViewModel
+        {
+            get
+            {
+                return SimpleIoc.Default.GetInstance<MultipleFilesAnalysisResultsViewModel>();
+            }
+        }
+
+        public PropertiesViewModel PropertiesViewModel
+        {
+            get
+            {
+                return SimpleIoc.Default.GetInstance<PropertiesViewModel>();
+            }
+        }
+
         public static void Cleanup()
         {
             SimpleIoc.Default.Unregister<IAssemblyAnalysisService>();

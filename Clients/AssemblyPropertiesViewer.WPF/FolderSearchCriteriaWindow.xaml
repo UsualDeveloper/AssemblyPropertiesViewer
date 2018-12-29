@@ -1,0 +1,64 @@
+﻿<Window x:Class="AssemblyPropertiesViewer.FolderSearchCriteriaWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AssemblyPropertiesViewer"
+        mc:Ignorable="d"
+        Title="Folder search criteria definition..." Height="300" Width="300"
+        DataContext="{Binding FolderSearchCriteriaViewModel, Source={StaticResource Locator}}">
+    <Grid>
+        <!--TODO: style the window appropriately-->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <!--Control for groups of filters for all analyzers-->
+        <ItemsControl Grid.Row="0" ItemsSource="{Binding Path=FilteringControls.Values}">
+            <ItemsControl.Template>
+                <ControlTemplate>
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <ItemsPresenter />
+                    </StackPanel>
+                </ControlTemplate>
+            </ItemsControl.Template>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <!--Control for single group of filters for one analyzer-->
+                    <ItemsControl ItemsSource="{Binding}">
+                        <ItemsControl.Template>
+                            <ControlTemplate>
+                                <Border BorderThickness="1" BorderBrush="Black" Margin="4" Padding="4">
+                                    <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        <!--TODO: change to display name of the group for the specific analyzer-->
+                                        <TextBlock Text="Filtering group" Margin="0 0 0 4"></TextBlock>
+                                        <ItemsPresenter />
+                                    </StackPanel>
+                                </Border>
+                            </ControlTemplate>
+                        </ItemsControl.Template>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <!--TODO: add default spacing between subsequent filtering control sets-->
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox Visibility="Visible" x:Name="isFilterEnabledCheckBox" Grid.Column="0" IsChecked="{Binding ItemControl.IsFilterEnabled}"
+                                              Margin="0 0 10 0" ToolTip="Enables/disables the filter"></CheckBox>
+                                    <ContentControl Grid.Column="1" Content="{Binding ItemControl}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" FlowDirection="RightToLeft" Margin="4">
+            <Button Command="{Binding StartFolderSearchCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}">
+                <TextBlock Margin="3, 0">Search</TextBlock>
+            </Button>
+        </StackPanel>
+    </Grid>
+</Window>

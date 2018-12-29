@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssemblyPropertiesViewer.Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssemblyPropertiesViewer.Core.Logger", "Core\AssemblyPropertiesViewer.Core.Logger\AssemblyPropertiesViewer.Core.Logger.csproj", "{67468EB2-D65D-44F4-B9BF-D45EE562BAD7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssemblyPropertiesViewer.Analyzers.Filtering", "Analyzers\Core\AssemblyPropertiesViewer.Analyzers.Filtering\AssemblyPropertiesViewer.Analyzers.Filtering.csproj", "{9BFE0B31-8BD3-414A-961E-5718E6750266}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{67468EB2-D65D-44F4-B9BF-D45EE562BAD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{67468EB2-D65D-44F4-B9BF-D45EE562BAD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{67468EB2-D65D-44F4-B9BF-D45EE562BAD7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9BFE0B31-8BD3-414A-961E-5718E6750266}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BFE0B31-8BD3-414A-961E-5718E6750266}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BFE0B31-8BD3-414A-961E-5718E6750266}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BFE0B31-8BD3-414A-961E-5718E6750266}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -72,5 +78,6 @@ Global
 		{F32ABA17-DEFE-4268-ACAC-9BB758D1D5BF} = {9385844F-275C-4CBC-A1C6-4716755A4F47}
 		{1BB47FA4-E49E-4621-A1F1-792213027110} = {7594BA7F-86D2-4DBC-814E-BE1C46433916}
 		{67468EB2-D65D-44F4-B9BF-D45EE562BAD7} = {7594BA7F-86D2-4DBC-814E-BE1C46433916}
+		{9BFE0B31-8BD3-414A-961E-5718E6750266} = {9385844F-275C-4CBC-A1C6-4716755A4F47}
 	EndGlobalSection
 EndGlobal

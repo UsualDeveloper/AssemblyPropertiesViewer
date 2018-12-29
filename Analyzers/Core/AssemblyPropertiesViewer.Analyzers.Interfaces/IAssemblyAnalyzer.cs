@@ -1,5 +1,7 @@
 ﻿using AssemblyPropertiesViewer.Analyzers.Models;
 using System.Reflection;
+using System.Collections.Generic;
+using AssemblyPropertiesViewer.Analyzers.Models.Filtering;
 
 namespace AssemblyPropertiesViewer.Analyzers.Interfaces
 {
@@ -8,5 +10,7 @@ namespace AssemblyPropertiesViewer.Analyzers.Interfaces
         string Name { get; }
         
         AnalysisResult Analyze(Assembly assembly);
+
+        IEnumerable<ISearchFilter> GetSearchFilters();
     }
 }

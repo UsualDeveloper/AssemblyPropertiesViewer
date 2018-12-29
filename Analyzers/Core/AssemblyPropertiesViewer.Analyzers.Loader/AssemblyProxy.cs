@@ -1,5 +1,6 @@
 ﻿using AssemblyPropertiesViewer.Analyzers.Interfaces;
 using AssemblyPropertiesViewer.Analyzers.Models;
+using AssemblyPropertiesViewer.Analyzers.Models.Filtering;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -36,10 +37,30 @@ namespace AssemblyPropertiesViewer.Analyzers.Loader
             var assemblyAnalyzers = GetAnalyzers();
             foreach (var analyzer in assemblyAnalyzers)
             {
-                analysisResults.Add(InspectAssemblyWithAnalyzer(analyzer));
+                var resultsForAnalyzer = InspectAssemblyWithAnalyzer(analyzer);
+                resultsForAnalyzer.AnalyzerTypeFullName = analyzer.GetType().FullName;
+
+                analysisResults.Add(resultsForAnalyzer);
             }
 
             return analysisResults;
+        }
+
+        public IReadOnlyDictionary<string, IEnumerable<ISearchFilter>> GetAvailableSearchFilters()
+        {
+            var filters = new Dictionary<string, IEnumerable<ISearchFilter>>();
+            
+            var assemblyAnalyzers = GetAnalyzers();
+            foreach (var analyzer in assemblyAnalyzers)
+            {
+                var filtersForAnalyzer = analyzer.GetSearchFilters();
+                if (filtersForAnalyzer != null)
+                {
+                    filters.Add(analyzer.GetType().FullName, filtersForAnalyzer);
+                }
+            }
+
+            return filters;
         }
 
         private IEnumerable<IAssemblyAnalyzer> GetAnalyzers()
@@ -87,7 +108,7 @@ namespace AssemblyPropertiesViewer.Analyzers.Loader
                 {
                     referencedAssemblies.Add(Assembly.ReflectionOnlyLoad(a.FullName));
                 }
-                catch (Exception err)
+                catch (Exception)
                 {
                     // TODO: handle this as a warning message in the analysis results
                 }

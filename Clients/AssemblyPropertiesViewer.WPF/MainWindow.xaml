@@ -19,17 +19,17 @@
     <Window.ContextMenu>
         <ContextMenu>
             <MenuItem Header="Select assembly to analyze..." Command="{Binding Path=AnalyzeAssemblyCommand}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}" />
+            <MenuItem Header="Alayze folder with search criteria..." Command="{Binding Path=AnalyzeFolderCommand}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}" />
             <Separator />
             <MenuItem Header="Show / Hide window title bar" Command="{Binding Path=ToggleTitleBarVisibilityCommand}" CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}" />
-            <!--<MenuItem Header="Alayze folder with search criteria..." />-->
-                <Separator />
+            <Separator />
             <MenuItem Header="Exit" Command="{Binding Path=CloseApplicationCommand}" />
         </ContextMenu>
     </Window.ContextMenu>
     <Grid>
         <Grid Margin="0">
             <TextBlock Padding="20" x:Name="textBlock" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" TextWrapping="Wrap" TextAlignment="Center" 
-                   Text="Drop assembly here to display information about it" Margin="0" AllowDrop="True" Background="#FFD0D0D0">
+                   Text="Drop assembly here to display information about it or right-click to show other options" Margin="0" AllowDrop="True" Background="#FFD0D0D0">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Drop">
                         <cmd:EventToCommand Command="{Binding DropAssemblyCommand}" PassEventArgsToCommand="True"></cmd:EventToCommand>

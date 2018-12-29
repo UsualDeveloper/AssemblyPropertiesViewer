@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AssemblyPropertiesViewer.Analyzers.Models;
+using AssemblyPropertiesViewer.Analyzers.Models.Filtering;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -10,7 +12,12 @@ namespace AssemblyPropertiesViewer.Analyzers.BasicAnalyzers.Base
     {
         protected const string NoValueFoundString = "/no value found/";
 
-        IEnumerable<CustomAttributeData> customAttributes;
+        private IEnumerable<CustomAttributeData> customAttributes;
+
+        public virtual IEnumerable<ISearchFilter> GetSearchFilters()
+        {
+            return null;
+        }
 
         protected U GetAssemblyAttributePropertyValueOrDefault<T, U>(Assembly assembly, string propertyName) where T : Attribute
         {

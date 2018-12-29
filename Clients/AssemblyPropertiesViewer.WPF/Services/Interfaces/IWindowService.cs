@@ -13,6 +13,8 @@ namespace AssemblyPropertiesViewer.Services.Interfaces
         /// <param name="dataContext">Data context object to be set for the child window.</param>
         void OpenChildWindow<T>(DependencyObject elementInParentWindow, object dataContext) where T : Window, new();
 
+        bool OpenChildDialogWithResult<T>(DependencyObject elementInParentWindow, object dataContext) where T : Window, new();
+
         /// <summary>
         /// Opens file selection dialog with file type filtering, if filters were specified.
         /// </summary>
@@ -20,5 +22,19 @@ namespace AssemblyPropertiesViewer.Services.Interfaces
         /// <param name="filtersString">File type filters in a string format (for example: "Text files (*.txt)|*.txt|All files (*.*)|*.*").</param>
         /// <returns>Path to the selected file or an empty string if no file was selected.</returns>
         string OpenFileSelectionDialog(DependencyObject elementInOwnerWindow, string filtersString = null);
+
+        /// <summary>
+        /// Opens folder selection dialog.
+        /// </summary>
+        /// <param name="elementInOwnerWindow">DependencyObject attached to the window to be set as owner of the file selection dialog.</param>
+        /// <returns>Path to the selected folder or an empty string, when no path is selected.</returns>
+        string OpenFolderSelectionDialog(DependencyObject elementInOwnerWindow);
+
+        /// <summary>
+        /// Closes selected window and optionally sets its result.
+        /// </summary>
+        /// <param name="window">Reference to the window to be closed.</param>
+        /// <param name="setDialogActionConfirmation">If set to true, sets dialog result to mark that the action performed in the dialog is confirmed.</param>
+        void CloseWindowWithResult(Window window, bool setDialogActionConfirmation = false);
     }
 }

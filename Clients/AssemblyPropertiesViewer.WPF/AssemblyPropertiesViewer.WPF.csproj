@@ -53,6 +53,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\MvvmLightLibs.5.3.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
       <Private>True</Private>
@@ -75,16 +76,35 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\DynamicDictionaryBasedDataGrid.cs" />
+    <Compile Include="FolderSearchCriteriaWindow.xaml.cs">
+      <DependentUpon>FolderSearchCriteriaWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MultipleFilesAnalysisResultsWindow.xaml.cs">
+      <DependentUpon>MultipleFilesAnalysisResultsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PropertiesWindow.xaml.cs">
       <DependentUpon>PropertiesWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Services\ApplicationControlService.cs" />
+    <Compile Include="Filtering\FilterDefinitionControlCreationVisitor.cs" />
+    <Compile Include="Services\FileSystemService.cs" />
+    <Compile Include="Services\Interfaces\IApplicationControlService.cs" />
     <Compile Include="Services\Interfaces\IAssemblyAnalysisService.cs" />
+    <Compile Include="Services\Interfaces\IFileSystemService.cs" />
+    <Compile Include="Services\Interfaces\IFilteringControlCreationService.cs" />
     <Compile Include="Services\Interfaces\IWindowService.cs" />
     <Compile Include="Services\RestrictedAppDomainAnalysisService.cs" />
     <Compile Include="Services\WindowService.cs" />
+    <Compile Include="ViewModel\FolderSearchCriteriaViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModelLocator.cs" />
+    <Compile Include="ViewModel\MultipleFilesAnalysisResultsViewModel.cs" />
     <Compile Include="ViewModel\PropertiesViewModel.cs" />
+    <Page Include="FolderSearchCriteriaWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -97,6 +117,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="MultipleFilesAnalysisResultsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="PropertiesWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -139,6 +163,10 @@
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Analyzers\Core\AssemblyPropertiesViewer.Analyzers.Filtering\AssemblyPropertiesViewer.Analyzers.Filtering.csproj">
+      <Project>{9bfe0b31-8bd3-414a-961e-5718e6750266}</Project>
+      <Name>AssemblyPropertiesViewer.Analyzers.Filtering</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Analyzers\Core\AssemblyPropertiesViewer.Analyzers.Loader\AssemblyPropertiesViewer.Analyzers.Loader.csproj">
       <Project>{235BEEA1-89A4-4BFE-BAD5-B8FFAF12443C}</Project>
       <Name>AssemblyPropertiesViewer.Analyzers.Loader</Name>
