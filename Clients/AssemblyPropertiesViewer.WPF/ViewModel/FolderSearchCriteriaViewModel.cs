@@ -1,5 +1,6 @@
 ﻿using AssemblyPropertiesViewer.Analyzers.Models;
 using AssemblyPropertiesViewer.Analyzers.Models.Filtering;
+using AssemblyPropertiesViewer.Controls;
 using AssemblyPropertiesViewer.Services.Filtering;
 using AssemblyPropertiesViewer.Services.Interfaces;
 using GalaSoft.MvvmLight;
