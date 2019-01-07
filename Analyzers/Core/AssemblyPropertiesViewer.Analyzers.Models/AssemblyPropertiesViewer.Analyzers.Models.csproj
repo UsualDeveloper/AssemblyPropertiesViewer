@@ -41,7 +41,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnalysisResult.cs" />
-    <Compile Include="Filtering\ISearchFilter.cs" />
+    <Compile Include="Filtering\BooleanFilter.cs" />
+    <Compile Include="Filtering\DropDownFilter.cs" />
+    <Compile Include="Filtering\Interfaces\ISearchFilter.cs" />
+    <Compile Include="Filtering\Interfaces\ISearchFilterVisitor.cs" />
+    <Compile Include="Filtering\SearchFilterBase.cs" />
+    <Compile Include="Filtering\StringFilter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

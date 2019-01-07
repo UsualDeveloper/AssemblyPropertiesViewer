@@ -1,11 +1,12 @@
 ﻿using AssemblyPropertiesViewer.Analyzers.BasicAnalyzers.Base;
 using AssemblyPropertiesViewer.Analyzers.Interfaces;
 using AssemblyPropertiesViewer.Analyzers.Models;
+using AssemblyPropertiesViewer.Analyzers.Models.Filtering;
+using AssemblyPropertiesViewer.Analyzers.Models.Filtering.Interfaces;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using static System.Diagnostics.DebuggableAttribute;
-using System.Collections.Generic;
-using AssemblyPropertiesViewer.Analyzers.Models.Filtering;
 
 namespace AssemblyPropertiesViewer.Analyzers.BasicAnalyzers
 {

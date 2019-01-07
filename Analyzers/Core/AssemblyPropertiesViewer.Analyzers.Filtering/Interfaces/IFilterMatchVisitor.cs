@@ -1,10 +1,5 @@
 ﻿using AssemblyPropertiesViewer.Analyzers.Models;
-using AssemblyPropertiesViewer.Analyzers.Models.Filtering;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using AssemblyPropertiesViewer.Analyzers.Models.Filtering.Interfaces;
 
 namespace AssemblyPropertiesViewer.Analyzers.Filtering.Interfaces
 {

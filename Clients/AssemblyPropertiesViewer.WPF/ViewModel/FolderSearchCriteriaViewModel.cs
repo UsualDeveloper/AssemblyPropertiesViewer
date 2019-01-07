@@ -1,16 +1,10 @@
-﻿using AssemblyPropertiesViewer.Analyzers.Models;
-using AssemblyPropertiesViewer.Analyzers.Models.Filtering;
+﻿using AssemblyPropertiesViewer.Analyzers.Models.Filtering.Interfaces;
 using AssemblyPropertiesViewer.Controls;
-using AssemblyPropertiesViewer.Services.Filtering;
 using AssemblyPropertiesViewer.Services.Interfaces;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -29,6 +23,7 @@ namespace AssemblyPropertiesViewer.ViewModel
             }
         }
         IReadOnlyDictionary<string, IEnumerable<ISearchFilter>> searchCriteria;
+
         public bool SearchRecursively { get; set; } = true;
 
         public ICommand StartFolderSearchCommand { get; private set; }

@@ -1,9 +1,10 @@
 ﻿using AssemblyPropertiesViewer.Analyzers.BasicAnalyzers.Base;
 using AssemblyPropertiesViewer.Analyzers.Interfaces;
 using AssemblyPropertiesViewer.Analyzers.Models;
-using System.Reflection;
 using AssemblyPropertiesViewer.Analyzers.Models.Filtering;
+using AssemblyPropertiesViewer.Analyzers.Models.Filtering.Interfaces;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace AssemblyPropertiesViewer.Analyzers.BasicAnalyzers
 {

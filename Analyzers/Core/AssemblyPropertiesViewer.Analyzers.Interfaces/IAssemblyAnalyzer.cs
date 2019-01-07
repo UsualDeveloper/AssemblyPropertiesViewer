@@ -1,7 +1,7 @@
 ﻿using AssemblyPropertiesViewer.Analyzers.Models;
-using System.Reflection;
+using AssemblyPropertiesViewer.Analyzers.Models.Filtering.Interfaces;
 using System.Collections.Generic;
-using AssemblyPropertiesViewer.Analyzers.Models.Filtering;
+using System.Reflection;
 
 namespace AssemblyPropertiesViewer.Analyzers.Interfaces
 {
