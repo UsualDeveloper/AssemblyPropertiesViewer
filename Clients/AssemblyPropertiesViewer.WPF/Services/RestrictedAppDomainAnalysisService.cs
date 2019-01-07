@@ -1,6 +1,7 @@
-﻿using AssemblyPropertiesViewer.Analyzers.Loader;
+﻿using AssemblyPropertiesViewer.Analyzers.Filtering.Interfaces;
+using AssemblyPropertiesViewer.Analyzers.Loader;
 using AssemblyPropertiesViewer.Analyzers.Models;
-using AssemblyPropertiesViewer.Analyzers.Models.Filtering;
+using AssemblyPropertiesViewer.Analyzers.Models.Filtering.Interfaces;
 using AssemblyPropertiesViewer.Core.Interfaces;
 using AssemblyPropertiesViewer.Services.Interfaces;
 using System;
@@ -8,8 +9,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security;
 using System.Security.Permissions;
-using System.Linq;
-using AssemblyPropertiesViewer.Analyzers.Filtering.Interfaces;
 
 namespace AssemblyPropertiesViewer.Services
 {

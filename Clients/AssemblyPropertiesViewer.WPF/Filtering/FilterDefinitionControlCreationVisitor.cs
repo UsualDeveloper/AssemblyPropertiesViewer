@@ -1,5 +1,5 @@
-﻿using AssemblyPropertiesViewer.Analyzers.Models;
-using AssemblyPropertiesViewer.Analyzers.Models.Filtering;
+﻿using AssemblyPropertiesViewer.Analyzers.Models.Filtering;
+using AssemblyPropertiesViewer.Analyzers.Models.Filtering.Interfaces;
 using AssemblyPropertiesViewer.Controls;
 using AssemblyPropertiesViewer.Services.Interfaces;
 using System;
